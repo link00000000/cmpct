@@ -3,19 +3,21 @@
  * all client routing
  */
 
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Home } from './Home'
 import { _404 } from './_404'
 
 const Routes = (
     <BrowserRouter>
-        <Route path='/' exact>
-            <Home />
-        </Route>
-        <Route path='*'>
-            {/*eslint-disable-next-line react/jsx-pascal-case*/}
-            <_404 />
-        </Route>
+        <Switch>
+            <Route path='/' exact>
+                <Home />
+            </Route>
+            <Route path='*'>
+                {/*eslint-disable-next-line react/jsx-pascal-case*/}
+                <_404 />
+            </Route>
+        </Switch>
     </BrowserRouter>
 )
 
