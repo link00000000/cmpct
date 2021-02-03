@@ -5,7 +5,7 @@ import { TextInput } from './TextInput'
 export const ShortenerInput: FunctionComponent = () => {
     return (
         <div className='flex flex-col place-items-center'>
-            <TextInput placeholder='your.massive/url' />
+            <TextInput placeholder='paste://your.massive/url?right=here' />
             <Button color='bg-yellow-300'>cmpct it</Button>
         </div>
     )
