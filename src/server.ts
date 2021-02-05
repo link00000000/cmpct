@@ -23,6 +23,6 @@ export class Server {
     }
 
     private static onListening(port: number, host = "localhost", protocol = "https") {
-        console.log(`${protocol}://${host}:${port}`)
+        console.log(`Express listening at ${protocol}://${host}:${port}`)
     }
 }
