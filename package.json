@@ -1,0 +1,8 @@
+{
+  "name": "cmpct",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:link00000000/cmpct.git",
+  "author": "link00000000 <crandall.logan@gmail.com>",
+  "license": "MIT"
+}
