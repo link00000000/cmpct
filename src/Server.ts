@@ -5,6 +5,12 @@ import appRootPath from 'app-root-path'
 import bodyParser from 'body-parser'
 import type winston from 'winston'
 
+/**
+ * An HTTPS server that uses express. Expects SSL files in `certs/` directory.
+ * If there are no certs, run `npm run ssl-gencerts` (openssl required).
+ * Routes can be added using the `routes` property before starting. Server is
+ * started using `start` method.
+ */
 export class Server {
     private static SSL_OPTIONS = {
         key: fs.readFileSync(appRootPath.resolve('certs/selfsigned.pem')),
