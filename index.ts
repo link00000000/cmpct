@@ -1,9 +1,10 @@
 import { Server } from './src/Server'
-import {UrlManager} from './src/UrlManager'
-import {StatusCodes} from 'http-status-codes'
+import { UrlManager } from './src/UrlManager'
+import { StatusCodes } from 'http-status-codes'
+import { logger } from './src/Logger'
 
-const server = new Server()
-const urlManager = new UrlManager()
+const server = new Server(logger)
+const urlManager = new UrlManager(logger)
 
 /**
  * Response type for create endpoint

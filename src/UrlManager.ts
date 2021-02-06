@@ -1,5 +1,6 @@
 import redis from 'async-redis'
 import nanoid from 'nanoid'
+import type winston from 'winston'
 
 export class UrlManager {
     private static shortUrlGeneratorAlphabet = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -10,7 +11,7 @@ export class UrlManager {
 
     private redisClient = redis.createClient()
 
-    constructor() {
+    constructor(private logger: winston.Logger) {
         this.redisClient.on("error", this.redisErrorHandler)
     }
 
@@ -19,7 +20,7 @@ export class UrlManager {
      * @param error Error
      */
     private redisErrorHandler = (error: Error | string) => {
-        console.error(error)
+        this.logger.error(error)
     }
 
     /**
@@ -44,6 +45,9 @@ export class UrlManager {
         } while(!isUnique)
 
         await this.redisClient.set(shortUrlId, url)
+        this.logger.info(`Created new url: ${shortUrlId} -> ${url}`)
+        this.logger.error(new Error('this is a test error'))
+
         return shortUrlId
     }
 }
