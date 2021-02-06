@@ -15,7 +15,9 @@ export class Server {
 
     private app = express()
     private httpsServer = https.createServer(Server.SSL_OPTIONS, this.app)
-    private readonly defaultPort = process.env.PORT ? parseInt(process.env.PORT) : 8080
+    private readonly defaultPort = process.env.PORT
+        ? parseInt(process.env.PORT)
+        : 8080
 
     constructor(private logger: winston.Logger) {}
 
@@ -27,11 +29,15 @@ export class Server {
         this.onListening(port)
     }
 
-    private logTraffic(req: express.Request, res: express.Response, next: express.NextFunction) {
+    private logTraffic(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
         // this.logger.info(`${req.method} ${req.url} - ${req.ip}`)
     }
 
-    private onListening(port: number, host = "localhost", protocol = "https") {
+    private onListening(port: number, host = 'localhost', protocol = 'https') {
         this.logger.info(`Express listening at ${protocol}://${host}:${port}`)
     }
 }

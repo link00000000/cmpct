@@ -3,16 +3,18 @@ import nanoid from 'nanoid'
 import type winston from 'winston'
 
 export class UrlManager {
-    private static shortUrlGeneratorAlphabet = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    private static shortUrlGeneratorAlphabet =
+        '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     private static shortUrlGeneratorLength = 8
     private static shortUrlGenerator = nanoid.customAlphabet(
         UrlManager.shortUrlGeneratorAlphabet,
-        UrlManager.shortUrlGeneratorLength)
+        UrlManager.shortUrlGeneratorLength
+    )
 
     private redisClient = redis.createClient()
 
     constructor(private logger: winston.Logger) {
-        this.redisClient.on("error", this.redisErrorHandler)
+        this.redisClient.on('error', this.redisErrorHandler)
     }
 
     /**
@@ -36,17 +38,15 @@ export class UrlManager {
             shortUrlId = UrlManager.shortUrlGenerator()
 
             try {
-                isUnique = !await this.redisClient.exists(shortUrlId)
-            } catch(error) {
+                isUnique = !(await this.redisClient.exists(shortUrlId))
+            } catch (error) {
                 this.redisErrorHandler(error)
                 throw error
             }
-
-        } while(!isUnique)
+        } while (!isUnique)
 
         await this.redisClient.set(shortUrlId, url)
         this.logger.info(`Created new url: ${shortUrlId} -> ${url}`)
-        this.logger.error(new Error('this is a test error'))
 
         return shortUrlId
     }
