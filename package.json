@@ -28,6 +28,8 @@
         "dev": "nodemon --watch index.ts --watch src --ext ts --exec npm run dev:server",
         "dev:server": "cross-env NODE_ENV=development ts-node index.ts",
         "lint": "prettier --write --ignore-unknown .",
-        "ssl-gencerts": "mkdir -p certs && openssl req -x509 -newkey rsa:4096 -keyout certs/selfsigned.pem -out certs/selfsigned.cert -days 365 -nodes"
+        "ssl-gencerts": "mkdir -p certs && openssl req -x509 -newkey rsa:4096 -keyout certs/selfsigned.pem -out certs/selfsigned.cert -days 365 -nodes",
+        "redis:start": "docker-compose up -d redis",
+        "redis:attach": "docker-compose exec redis redis-cli"
     }
 }
