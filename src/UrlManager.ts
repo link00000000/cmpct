@@ -2,6 +2,10 @@ import redis from 'async-redis'
 import nanoid from 'nanoid'
 import type winston from 'winston'
 
+/**
+ * Manager of shortened URLs. This class is responsible for interfacing
+ * with databases instead of interacting with databases directly
+ */
 export class UrlManager {
     private static shortUrlGeneratorAlphabet =
         '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
