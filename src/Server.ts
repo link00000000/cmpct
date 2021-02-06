@@ -2,6 +2,7 @@ import express = require('express')
 import https = require('https')
 import fs = require('fs')
 import appRootPath from 'app-root-path'
+import bodyParser from 'body-parser'
 
 export class Server {
     private static SSL_OPTIONS = {
@@ -16,6 +17,7 @@ export class Server {
     private readonly defaultPort = process.env.PORT ? parseInt(process.env.PORT) : 8080
 
     public start(port = this.defaultPort) {
+        this.app.use(bodyParser.json())
         this.app.use('/api', this.routes)
 
         this.httpsServer.listen(port)
