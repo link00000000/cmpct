@@ -1,6 +1,9 @@
 import winston from 'winston'
 import appRootPath from 'app-root-path'
 
+/**
+ * Logger to record runtime information. Use this instead of `console.log()`
+ */
 export const logger = winston.createLogger({
     level: 'info',
     transports: [
