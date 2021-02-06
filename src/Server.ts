@@ -23,6 +23,7 @@ export class Server {
 
     public start(port = this.defaultPort) {
         this.app.use(bodyParser.json())
+        this.app.use(this.logTraffic.bind(this))
         this.app.use('/api', this.routes)
 
         this.httpsServer.listen(port)
@@ -31,10 +32,14 @@ export class Server {
 
     private logTraffic(
         req: express.Request,
-        res: express.Response,
+        _res: express.Response,
         next: express.NextFunction
     ) {
-        // this.logger.info(`${req.method} ${req.url} - ${req.ip}`)
+        const { method, url } = req
+        const ip = req.headers['x-forwarded-for'] ?? req.ip
+
+        this.logger.info(`${method} ${url} - ${ip}`)
+        next()
     }
 
     private onListening(port: number, host = 'localhost', protocol = 'https') {
