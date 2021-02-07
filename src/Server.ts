@@ -17,7 +17,7 @@ export class Server {
         cert: fs.readFileSync(appRootPath.resolve('certs/selfsigned.cert'))
     }
 
-    public routes = express.Router()
+    public api = express.Router()
 
     private app = express()
     private httpsServer = https.createServer(Server.SSL_OPTIONS, this.app)
@@ -34,7 +34,7 @@ export class Server {
     public start(port = this.defaultPort) {
         this.app.use(bodyParser.json())
         this.app.use(this.logTraffic.bind(this))
-        this.app.use('/api', this.routes)
+        this.app.use('/api', this.api)
 
         this.httpsServer.listen(port)
         this.onListening(port)
