@@ -6,6 +6,6 @@ import { createRequestHandler } from './src/Routes/Create'
 const server = new Server(logger)
 const urlManager = new UrlManager(logger)
 
-server.routes.post('/create', createRequestHandler(urlManager))
+server.routes.post('/', createRequestHandler(urlManager))
 
 server.start()
