@@ -26,7 +26,11 @@ export class UrlManager {
      * @param error Error
      */
     private redisErrorHandler = (error: Error | string) => {
-        this.logger.error(error)
+        if (error instanceof Error) {
+            this.logger.error(error.message)
+        } else {
+            this.logger.error(error)
+        }
     }
 
     /**
@@ -53,5 +57,19 @@ export class UrlManager {
         this.logger.info(`Created new url: ${shortUrlId} -> ${url}`)
 
         return shortUrlId
+    }
+
+    public async getTargetUrl(shortUrlId: string) {
+        try {
+            const targetUrl = await this.redisClient.get(shortUrlId)
+            if (!targetUrl)
+                throw new Error(`Error fetching url ${shortUrlId}, not found`)
+
+            this.logger.info(`Redirecting ${shortUrlId} -> ${targetUrl}`)
+            return targetUrl
+        } catch (error) {
+            this.redisErrorHandler(error)
+            throw error
+        }
     }
 }
