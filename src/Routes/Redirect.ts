@@ -9,7 +9,7 @@ interface RedirectProps {
 interface RedirectResponseBody {
     error?: string
     data?: {
-        target: string
+        targetUrl: string
     }
 }
 
@@ -19,8 +19,10 @@ export const redirectRequestHandler = (urlManager: UrlManager) => {
         res: Response
     ) => {
         try {
-            const target = await urlManager.getTargetUrl(req.params.shortUrlId)
-            return res.status(StatusCodes.OK).json({ data: { target } })
+            const targetUrl = await urlManager.getTargetUrl(
+                req.params.shortUrlId
+            )
+            return res.status(StatusCodes.OK).json({ data: { targetUrl } })
         } catch (error) {
             return res
                 .status(StatusCodes.INTERNAL_SERVER_ERROR)
