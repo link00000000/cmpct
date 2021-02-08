@@ -1,9 +1,10 @@
 import express = require('express')
 import https = require('https')
 import fs = require('fs')
-import appRootPath from 'app-root-path'
+import appRootPath, { resolve } from 'app-root-path'
 import bodyParser from 'body-parser'
 import type winston from 'winston'
+import proxy from 'express-http-proxy'
 
 /**
  * An HTTPS server that uses express. Expects SSL files in `certs/` directory.
@@ -35,6 +36,14 @@ export class Server {
         this.app.use(bodyParser.json())
         this.app.use(this.logTraffic.bind(this))
         this.app.use('/api', this.api)
+
+        if (process.env.NODE_ENV === 'development') {
+            // Proxy to react dev server if in development
+            this.app.use('/', proxy('http://localhost:3000'))
+        } else {
+            // Serve static files if in production
+            this.app.use('/', express.static(resolve('client/build')))
+        }
 
         this.httpsServer.listen(port)
         this.onListening(port)
