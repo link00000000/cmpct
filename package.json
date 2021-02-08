@@ -30,6 +30,8 @@
         "winston": "^3.3.3"
     },
     "scripts": {
+        "prestart": "yarn build",
+        "start": "node build",
         "clean": "rimraf build client/build",
         "build": "run-p --print-label --print-name build:*",
         "build:server": "tsc",
