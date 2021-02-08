@@ -1,4 +1,5 @@
 import express = require('express')
+import http = require('http')
 import https = require('https')
 import fs = require('fs')
 import appRootPath, { resolve } from 'app-root-path'
@@ -13,20 +14,30 @@ import proxy from 'express-http-proxy'
  * started using `start` method.
  */
 export class Server {
-    private static SSL_OPTIONS = {
-        key: fs.readFileSync(appRootPath.resolve('certs/selfsigned.pem')),
-        cert: fs.readFileSync(appRootPath.resolve('certs/selfsigned.cert'))
-    }
-
     public api = express.Router()
 
     private app = express()
-    private httpsServer = https.createServer(Server.SSL_OPTIONS, this.app)
+    private server: https.Server | http.Server
     private readonly defaultPort = process.env.PORT
         ? parseInt(process.env.PORT)
         : 8080
 
-    constructor(private logger: winston.Logger) {}
+    constructor(private logger: winston.Logger) {
+        // Use https in development with self-signed certs
+        if (process.env.NODE_ENV === 'development') {
+            const SSL_OPTIONS = {
+                key: fs.readFileSync(
+                    appRootPath.resolve('certs/selfsigned.pem')
+                ),
+                cert: fs.readFileSync(
+                    appRootPath.resolve('certs/selfsigned.cert')
+                )
+            }
+            this.server = https.createServer(SSL_OPTIONS, this.app)
+        } else {
+            this.server = http.createServer(this.app)
+        }
+    }
 
     /**
      * Initialize HTTP server and begin serving traffic
@@ -45,8 +56,12 @@ export class Server {
             this.app.use('/', express.static(resolve('client/build')))
         }
 
-        this.httpsServer.listen(port)
-        this.onListening(port)
+        this.server.listen(port)
+        this.onListening(
+            port,
+            'localhost',
+            process.env.NODE_ENV === 'development' ? 'https' : 'http'
+        )
     }
 
     /**
