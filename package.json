@@ -29,10 +29,14 @@
         "winston": "^3.3.3"
     },
     "scripts": {
-        "build": "tsc",
-        "dev": "open-cli https://localhost:8080 && run-p --print-label --print-name --race dev:*",
+        "build": "run-p --print-label --print-name build:*",
+        "build:server": "tsc",
+        "build:client": "yarn --cwd client build",
+        "dev": "run-s --silent dev:open-browser dev:start",
+        "dev:start": "run-p --print-label --print-name --race dev:server dev:client",
+        "dev:open-browser": "open-cli https://localhost:8080",
         "dev:server": "nodemon --watch index.ts --watch src --ext ts --exec cross-env NODE_ENV=development ts-node index.ts",
-        "dev:client": "cross-env BROWSER=none yarn --cwd client start",
+        "dev:client": "cross-env BROWSER=none NODE_ENV=development yarn --cwd client start",
         "lint": "prettier --write --ignore-unknown .",
         "ssl-gencerts": "mkdir -p certs && openssl req -x509 -newkey rsa:4096 -keyout certs/selfsigned.pem -out certs/selfsigned.cert -days 365 -nodes",
         "redis:start": "docker-compose up -d redis",
