@@ -41,7 +41,7 @@
         "build:client": "yarn --cwd client build",
         "dev": "run-s --silent dev:open-browser dev:start",
         "dev:start": "run-p --print-label --print-name --race dev:server dev:client",
-        "dev:open-browser": "open-cli https://localhost:8080",
+        "dev:open-browser": "open-cli http://localhost:8080",
         "dev:server": "nodemon --watch index.ts --watch src --ext ts --exec cross-env NODE_ENV=development ts-node index.ts",
         "dev:client": "cross-env BROWSER=none NODE_ENV=development yarn --cwd client start",
         "lint": "prettier --write --ignore-unknown .",
