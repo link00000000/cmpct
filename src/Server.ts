@@ -3,7 +3,6 @@ import http = require('http')
 import { resolve } from 'app-root-path'
 import bodyParser from 'body-parser'
 import type winston from 'winston'
-import proxy from 'express-http-proxy'
 
 /**
  * An HTTP server that uses express. Routes can be added using the `routes`
@@ -31,7 +30,6 @@ export class Server {
 
         if (process.env.NODE_ENV === 'development') {
             // Proxy to react dev server if in development
-            this.app.use('/', proxy('http://localhost:3000'))
         } else {
             // Serve static files if in production
             this.app.use('/', express.static(resolve('client/build')))
