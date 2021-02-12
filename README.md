@@ -33,6 +33,12 @@ cd client && yarn && cd ..
 yarn start
 ```
 
+## Docker 🐳
+
+```shell
+docker up
+```
+
 ## Useful Scripts ⚙
 
 -   `yarn lint` - Lint your code and automatically apply formatting fixes
