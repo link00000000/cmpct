@@ -66,9 +66,14 @@ export const ShortenerInput: FunctionComponent = () => {
                     setShortLink(null)
                 }}
             >
-                <span>
+                <span className="font-semibold">
                     Your shortened link is{' '}
-                    <a href={shortLink as string}>{shortLink}</a>
+                    <a
+                        className="font-bold underline hover:opacity-80"
+                        href={shortLink as string}
+                    >
+                        {shortLink}
+                    </a>
                 </span>
             </Notification>
 
