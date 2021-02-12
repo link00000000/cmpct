@@ -4,6 +4,7 @@ import { TextInput } from './TextInput'
 import axios from 'axios'
 import { CreateResponse } from '../../../src/Routes/Create'
 import { Notification, NotificationType } from './Notification'
+import { error } from 'console'
 
 export const ShortenerInput: FunctionComponent = () => {
     const [input, setInput] = useState<string>('')
@@ -51,20 +52,19 @@ export const ShortenerInput: FunctionComponent = () => {
                 cmpct it
             </Button>
 
-            {shortLink && (
-                <Notification>
-                    <span>
-                        Your shortened link is{' '}
-                        <a href={shortLink}>{shortLink}</a>
-                    </span>
-                </Notification>
-            )}
+            <Notification show={shortLink !== null}>
+                <span>
+                    Your shortened link is{' '}
+                    <a href={shortLink as string}>{shortLink}</a>
+                </span>
+            </Notification>
 
-            {errorNotification && (
-                <Notification type={NotificationType.error}>
-                    <span>{errorNotification.message}</span>
-                </Notification>
-            )}
+            <Notification
+                type={NotificationType.error}
+                show={errorNotification !== null}
+            >
+                <span>{errorNotification?.message}</span>
+            </Notification>
         </div>
     )
 }

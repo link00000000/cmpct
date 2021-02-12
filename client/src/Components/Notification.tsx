@@ -9,12 +9,14 @@ export enum NotificationType {
 interface Props {
     type?: NotificationType
     canDismiss?: boolean
+    show?: boolean
 }
 
 export const Notification: FunctionComponent<Props> = ({
     children,
     type = NotificationType.info,
-    canDismiss = true
+    canDismiss = true,
+    show = true
 }) => {
     const colors = {
         [NotificationType.info]: 'bg-blue-600',
@@ -25,6 +27,10 @@ export const Notification: FunctionComponent<Props> = ({
     return (
         <div
             className={`px-6 py-4 fixed w-full bottom-0 left-0 ${colors[type]} text-white font-sans font-bold text-lg text-center`}
+            style={{
+                transform: `translateY(${show ? '0' : '100%'})`,
+                transition: 'transform 200ms'
+            }}
         >
             <span>{children}</span>
 
