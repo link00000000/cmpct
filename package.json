@@ -45,6 +45,7 @@
         "redis:start": "docker-compose up -d redis",
         "redis:attach": "docker-compose exec redis redis-cli",
         "heroku:deploy": "run-s heroku:dependencies build start",
-        "heroku:dependencies": "cd client && yarn"
+        "heroku:dependencies": "cd client && yarn",
+        "heroku-postbuild": "yarn heroku:deploy"
     }
 }
