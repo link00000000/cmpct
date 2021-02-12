@@ -35,7 +35,7 @@
     },
     "scripts": {
         "start": "node build",
-        "clean": "rimraf build certs logs node_modules client/build client/node_modules *.log",
+        "clean": "rimraf build logs node_modules client/build client/node_modules *.log",
         "build": "run-p --print-label --print-name build:*",
         "build:server": "tsc",
         "build:client": "yarn --cwd client build",
