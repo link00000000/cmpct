@@ -5,6 +5,10 @@
     "repository": "git@github.com:link00000000/cmpct.git",
     "author": "link00000000 <crandall.logan@gmail.com>",
     "license": "MIT",
+    "engines": {
+        "node": "14.9.x",
+        "yarn": "1.22.x"
+    },
     "devDependencies": {
         "@types/app-root-path": "^1.2.4",
         "@types/async-redis": "^1.1.1",
