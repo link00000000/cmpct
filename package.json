@@ -48,7 +48,7 @@
         "ssl-gencerts": "mkdir -p certs && openssl req -x509 -newkey rsa:4096 -keyout certs/selfsigned.pem -out certs/selfsigned.cert -days 365 -nodes",
         "redis:start": "docker-compose up -d redis",
         "redis:attach": "docker-compose exec redis redis-cli",
-        "heroku:deploy": "run-s heroku:dependencies build start",
+        "heroku:deploy": "run-s heroku:dependencies build",
         "heroku:dependencies": "cd client && yarn",
         "heroku-postbuild": "yarn heroku:deploy"
     }
