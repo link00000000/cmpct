@@ -4,7 +4,6 @@ import { TextInput } from './TextInput'
 import axios from 'axios'
 import { CreateResponse } from '../../../src/Routes/Create'
 import { Notification, NotificationType } from './Notification'
-import { error } from 'console'
 
 export const ShortenerInput: FunctionComponent = () => {
     const [input, setInput] = useState<string>('')
@@ -20,6 +19,16 @@ export const ShortenerInput: FunctionComponent = () => {
     const handleSubmit = async (
         _event: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ) => {
+        const urlRegExpMatcher = RegExp(/^https?:\/\/.+\..+/)
+        const regExpResult = input?.match(urlRegExpMatcher)
+
+        console.log(regExpResult)
+
+        if (!regExpResult || regExpResult.length === 0) {
+            setErrorNotification(new Error('Input must be a valid URL'))
+            return
+        }
+
         try {
             const {
                 data: { data, error }
@@ -52,7 +61,12 @@ export const ShortenerInput: FunctionComponent = () => {
                 cmpct it
             </Button>
 
-            <Notification show={shortLink !== null}>
+            <Notification
+                show={shortLink !== null}
+                onClose={() => {
+                    setShortLink(null)
+                }}
+            >
                 <span>
                     Your shortened link is{' '}
                     <a href={shortLink as string}>{shortLink}</a>
@@ -62,6 +76,9 @@ export const ShortenerInput: FunctionComponent = () => {
             <Notification
                 type={NotificationType.error}
                 show={errorNotification !== null}
+                onClose={() => {
+                    setErrorNotification(null)
+                }}
             >
                 <span>{errorNotification?.message}</span>
             </Notification>

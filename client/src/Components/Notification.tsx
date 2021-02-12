@@ -10,13 +10,15 @@ interface Props {
     type?: NotificationType
     canDismiss?: boolean
     show?: boolean
+    onClose?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 export const Notification: FunctionComponent<Props> = ({
     children,
     type = NotificationType.info,
     canDismiss = true,
-    show = true
+    show = true,
+    onClose
 }) => {
     const colors = {
         [NotificationType.info]: 'bg-blue-600',
@@ -35,7 +37,10 @@ export const Notification: FunctionComponent<Props> = ({
             <span>{children}</span>
 
             {canDismiss && (
-                <button className="w-5 absolute right-6 top-5">
+                <button
+                    className="w-5 absolute right-6 top-5"
+                    onClick={onClose}
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
