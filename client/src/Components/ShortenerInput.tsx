@@ -16,9 +16,7 @@ export const ShortenerInput: FunctionComponent = () => {
         setInput(event.target.value)
     }
 
-    const handleSubmit = async (
-        _event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
+    const handleSubmit = async () => {
         const urlRegExpMatcher = RegExp(/^https?:\/\/.+\..+/)
         const regExpResult = input?.match(urlRegExpMatcher)
 
@@ -56,6 +54,7 @@ export const ShortenerInput: FunctionComponent = () => {
                 placeholder="paste://your.massive/url?right=here"
                 value={input}
                 onChange={handleChange}
+                onEnter={handleSubmit}
             />
             <Button color="bg-yellow-300" onClick={handleSubmit}>
                 cmpct it
