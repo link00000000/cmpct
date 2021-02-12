@@ -33,7 +33,10 @@ export class Server {
             // Proxy to react dev server if in development
             this.app.use(
                 '/',
-                createProxyMiddleware({ target: 'http://localhost:3000' })
+                createProxyMiddleware({
+                    target: 'http://localhost:3000',
+                    ws: true
+                })
             )
         } else {
             // Serve static files if in production
