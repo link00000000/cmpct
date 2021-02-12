@@ -8,7 +8,6 @@ A URL shrtnr
 
 -   yarn
 -   redis
--   openssl
 
 It is assumed there is already a redis server running on localhost
 
@@ -18,9 +17,6 @@ It is assumed there is already a redis server running on localhost
 # Install dependencies
 yarn
 cd client && yarn && cd ..
-
-# Generate self-signed SSL certificates
-yarn ssl-gencerts
 
 # Start development servers
 yarn dev
@@ -37,10 +33,15 @@ cd client && yarn && cd ..
 yarn start
 ```
 
+## Docker 🐳
+
+```shell
+docker up
+```
+
 ## Useful Scripts ⚙
 
 -   `yarn lint` - Lint your code and automatically apply formatting fixes
--   `yarn ssl-gencerts` - Generate SSL certificates using openssl in certs/
 -   `yarn dev` - Start both development servers
 -   `yarn build` - Build project for production. Compiled code in build/ and client/build/
 -   `yarn redis:start` - Start redis server using Docker
