@@ -10,4 +10,4 @@ const urlManager = new UrlManager(logger)
 server.api.post('/', createRequestHandler(urlManager))
 server.api.get('/:shortUrlId', redirectRequestHandler(urlManager))
 
-server.start()
+server.start(parseInt(process.env.PORT ?? String(8080)))

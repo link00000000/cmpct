@@ -5,6 +5,10 @@
     "repository": "git@github.com:link00000000/cmpct.git",
     "author": "link00000000 <crandall.logan@gmail.com>",
     "license": "MIT",
+    "engines": {
+        "node": "14.9.x",
+        "yarn": "1.22.x"
+    },
     "devDependencies": {
         "@types/app-root-path": "^1.2.4",
         "@types/async-redis": "^1.1.1",
@@ -30,7 +34,6 @@
         "winston": "^3.3.3"
     },
     "scripts": {
-        "prestart": "yarn build",
         "start": "node build",
         "clean": "rimraf build certs logs node_modules client/build client/node_modules *.log",
         "build": "run-p --print-label --print-name build:*",
@@ -44,6 +47,9 @@
         "lint": "prettier --write --ignore-unknown .",
         "ssl-gencerts": "mkdir -p certs && openssl req -x509 -newkey rsa:4096 -keyout certs/selfsigned.pem -out certs/selfsigned.cert -days 365 -nodes",
         "redis:start": "docker-compose up -d redis",
-        "redis:attach": "docker-compose exec redis redis-cli"
+        "redis:attach": "docker-compose exec redis redis-cli",
+        "heroku:deploy": "run-s heroku:dependencies build",
+        "heroku:dependencies": "cd client && yarn",
+        "heroku-postbuild": "yarn heroku:deploy"
     }
 }
