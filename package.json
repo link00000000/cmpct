@@ -15,6 +15,8 @@
         "@types/express": "^4.17.11",
         "@types/express-http-proxy": "^1.6.1",
         "cross-env": "^7.0.3",
+        "husky": "4",
+        "lint-staged": ">=10",
         "nodemon": "^2.0.7",
         "npm-run-all": "^4.1.5",
         "open-cli": "^6.0.1",
@@ -44,11 +46,20 @@
         "dev:open-browser": "open-cli http://localhost:8080",
         "dev:server": "nodemon --watch index.ts --watch src --ext ts --exec cross-env NODE_ENV=development ts-node index.ts",
         "dev:client": "cross-env BROWSER=none NODE_ENV=development yarn --cwd client start",
-        "lint": "prettier --write --ignore-unknown .",
+        "lint:files": "prettier --write --ignore-unknown --ignore-path .gitignore",
+        "lint": "npm run lint:files .",
         "redis:start": "docker-compose up -d redis",
         "redis:attach": "docker-compose exec redis redis-cli",
         "heroku:deploy": "run-s heroku:dependencies build",
         "heroku:dependencies": "cd client && yarn",
         "heroku-postbuild": "yarn heroku:deploy"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*": "npm run lint:files"
     }
 }
