@@ -15,12 +15,20 @@ export class UrlManager {
         UrlManager.shortUrlGeneratorLength
     )
 
-    private redisClient = redis.createClient({
-        host: process.env.REDIS_HOST ?? '127.0.0.1',
-        port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379
-    })
+    private redisClient
 
     constructor(private logger: winston.Logger) {
+        if (process.env.REDIS_URL) {
+            this.redisClient = redis.createClient(process.env.REDIS_URL)
+        } else {
+            this.redisClient = redis.createClient({
+                host: process.env.REDIS_HOST ?? '127.0.0.1',
+                port: process.env.REDIS_PORT
+                    ? parseInt(process.env.REDIS_PORT)
+                    : 6379
+            })
+        }
+
         this.redisClient.on('error', this.redisErrorHandler)
     }
 
