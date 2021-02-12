@@ -1,5 +1,7 @@
 # cmpct
 
+[![Heroku](https://heroku-badge.herokuapp.com/?app=cmpct)](https://cmpct.tk)
+
 A URL shrtnr
 
 ## Requirements ✨
