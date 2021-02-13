@@ -83,4 +83,12 @@ export class UrlManager {
             throw error
         }
     }
+
+    public async exists(shortUrlId: string): Promise<boolean> {
+        try {
+            return (await this.redisClient.exists(shortUrlId)) as boolean
+        } catch {
+            return false
+        }
+    }
 }
