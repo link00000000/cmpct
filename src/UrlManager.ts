@@ -73,8 +73,7 @@ export class UrlManager {
     public async getTargetUrl(shortUrlId: string) {
         try {
             const targetUrl = await this.redisClient.get(shortUrlId)
-            if (!targetUrl)
-                throw new Error(`Error fetching url ${shortUrlId}, not found`)
+            if (!targetUrl) throw new Error(`Error fetching url not found`)
 
             this.logger.info(`Redirecting ${shortUrlId} -> ${targetUrl}`)
             return targetUrl
