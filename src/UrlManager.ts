@@ -91,4 +91,13 @@ export class UrlManager {
             return false
         }
     }
+
+    public async deleteUrl(shortUrlId: string) {
+        try {
+            return await this.redisClient.del(shortUrlId)
+        } catch (error) {
+            this.redisErrorHandler(error)
+            throw error
+        }
+    }
 }
