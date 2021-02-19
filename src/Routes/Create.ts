@@ -5,14 +5,14 @@ import { UrlManager } from '../UrlManager'
 /**
  * Request body type for create endpoint
  */
-interface CreateRequestBody {
+export interface CreateRequestBody {
     url: string
 }
 
 /**
  * Response type for create endpoint
  */
-interface CreateResponse {
+export interface CreateResponse {
     error?: string
     data?: {
         id: string

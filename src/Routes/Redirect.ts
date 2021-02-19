@@ -2,11 +2,11 @@ import { StatusCodes } from 'http-status-codes'
 import type { Request, Response } from 'express'
 import { UrlManager } from './../UrlManager'
 
-interface RedirectProps {
+export interface RedirectProps {
     shortUrlId: string
 }
 
-interface RedirectResponseBody {
+export interface RedirectResponseBody {
     error?: string
     data?: {
         targetUrl: string
@@ -19,6 +19,12 @@ export const redirectRequestHandler = (urlManager: UrlManager) => {
         res: Response
     ) => {
         try {
+            if (!(await urlManager.exists(req.params.shortUrlId))) {
+                return res.status(StatusCodes.NOT_FOUND).json({
+                    error: 'Error fetching url, not found'
+                })
+            }
+
             const targetUrl = await urlManager.getTargetUrl(
                 req.params.shortUrlId
             )

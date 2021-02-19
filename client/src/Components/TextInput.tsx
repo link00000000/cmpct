@@ -1,12 +1,22 @@
 import { FunctionComponent } from 'react'
 import classNames from 'classnames'
 
-type Props = React.InputHTMLAttributes<HTMLInputElement>
+interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+    placeholder: string
+    value: string
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onEnter?: () => void
+}
 
 export const TextInput: FunctionComponent<Props> = (props) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter' && props.onEnter) props.onEnter()
+    }
+
     return (
         <input
             type="text"
+            onKeyDown={handleKeyDown}
             {...props}
             className={classNames(
                 'focus:text-gray-800',
