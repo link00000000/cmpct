@@ -3,11 +3,13 @@ import classNames from 'classnames'
 
 interface Props {
     color?: string
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 export const Button: FunctionComponent<Props> = ({
     color = 'bg-white',
-    children
+    children,
+    onClick
 }) => {
     return (
         <button className={classNames('focus:outline-none', 'group')}>

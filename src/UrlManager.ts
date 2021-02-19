@@ -73,11 +73,27 @@ export class UrlManager {
     public async getTargetUrl(shortUrlId: string) {
         try {
             const targetUrl = await this.redisClient.get(shortUrlId)
-            if (!targetUrl)
-                throw new Error(`Error fetching url ${shortUrlId}, not found`)
+            if (!targetUrl) throw new Error(`Error fetching url not found`)
 
             this.logger.info(`Redirecting ${shortUrlId} -> ${targetUrl}`)
             return targetUrl
+        } catch (error) {
+            this.redisErrorHandler(error)
+            throw error
+        }
+    }
+
+    public async exists(shortUrlId: string): Promise<boolean> {
+        try {
+            return (await this.redisClient.exists(shortUrlId)) as boolean
+        } catch {
+            return false
+        }
+    }
+
+    public async deleteUrl(shortUrlId: string) {
+        try {
+            return await this.redisClient.del(shortUrlId)
         } catch (error) {
             this.redisErrorHandler(error)
             throw error

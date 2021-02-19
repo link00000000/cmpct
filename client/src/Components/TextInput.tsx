@@ -3,9 +3,16 @@ import classNames from 'classnames'
 
 interface Props {
     placeholder: string
+    value: string
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onEnter?: () => void
 }
 
 export const TextInput: FunctionComponent<Props> = (props) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter' && props.onEnter) props.onEnter()
+    }
+
     return (
         <input
             type="text"

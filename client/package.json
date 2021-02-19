@@ -15,6 +15,7 @@
         "@types/react-router-dom": "^5.1.7",
         "autoprefixer": "^9",
         "classnames": "^2.2.6",
+        "axios": "^0.21.1",
         "postcss": "^7",
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
