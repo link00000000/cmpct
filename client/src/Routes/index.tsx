@@ -10,10 +10,10 @@ import { _404 } from './_404'
 const Routes = (
     <BrowserRouter>
         <Switch>
-            <Route path='/' exact>
+            <Route path="/" exact>
                 <Home />
             </Route>
-            <Route path='*'>
+            <Route path="*">
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <_404 />
             </Route>
