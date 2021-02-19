@@ -2,11 +2,11 @@ import { StatusCodes } from 'http-status-codes'
 import type { Request, Response } from 'express'
 import { UrlManager } from './../UrlManager'
 
-interface RedirectProps {
+export interface RedirectProps {
     shortUrlId: string
 }
 
-interface RedirectResponseBody {
+export interface RedirectResponseBody {
     error?: string
     data?: {
         targetUrl: string
