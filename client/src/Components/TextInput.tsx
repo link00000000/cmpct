@@ -2,9 +2,6 @@ import { FunctionComponent } from 'react'
 import classNames from 'classnames'
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
-    placeholder: string
-    value: string
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
     onEnter?: () => void
 }
 
