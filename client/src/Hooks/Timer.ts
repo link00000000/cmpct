@@ -11,9 +11,15 @@ export const useTimer = (duration: number, step = 1000) => {
     }
 
     const [currentTime, setCurrentTime] = useState<number>(0)
+    const [isRunning, setIsRunning] = useState<boolean>(false)
 
     useEffect(() => {
+        if (!isRunning) {
+            return
+        }
+
         if (currentTime >= duration) {
+            setIsRunning(false)
             return
         }
 
@@ -24,11 +30,19 @@ export const useTimer = (duration: number, step = 1000) => {
         return () => {
             clearTimeout(timeout)
         }
-    }, [currentTime, duration, step])
+    }, [currentTime, duration, step, isRunning])
 
     return {
         currentTime,
+        isRunning,
         percentage: currentTime / duration,
-        isDone: currentTime >= duration
+        isDone: currentTime >= duration,
+        start: () => {
+            setIsRunning(true)
+        },
+        reset: () => {
+            setIsRunning(false)
+            setCurrentTime(0)
+        }
     }
 }
