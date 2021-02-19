@@ -1,6 +1,7 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useState } from 'react'
 import { TextInput } from './TextInput'
 import { Button } from './Button'
+import { Notification } from './Notification'
 
 interface Props {
     display?: string
@@ -13,19 +14,30 @@ export const TextCopy: FunctionComponent<Props> = ({
     display = value,
     buttonText = 'Copy cmpct Link'
 }) => {
+    const [showNotification, setShowNotification] = useState<boolean>(false)
+
     const copyToClipboard = () => {
         navigator.clipboard.writeText(value)
+        setShowNotification(true)
     }
 
     return (
-        <div className="md:flex items-start">
-            <TextInput value={display} disabled />
-            <Button
-                className="w-full md:w-max md:ml-8"
-                onClick={copyToClipboard}
+        <>
+            <div className="md:flex items-start">
+                <TextInput value={display} disabled />
+                <Button
+                    className="w-full md:w-max md:ml-8"
+                    onClick={copyToClipboard}
+                >
+                    {buttonText}
+                </Button>
+            </div>
+            <Notification
+                show={showNotification}
+                onClose={() => setShowNotification(false)}
             >
-                {buttonText}
-            </Button>
-        </div>
+                Link copied to clipboard!
+            </Notification>
+        </>
     )
 }
