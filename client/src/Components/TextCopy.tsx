@@ -13,10 +13,19 @@ export const TextCopy: FunctionComponent<Props> = ({
     display = value,
     buttonText = 'Copy cmpct Link'
 }) => {
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(value)
+    }
+
     return (
         <div className="md:flex items-start">
             <TextInput value={display} disabled />
-            <Button className="w-full md:w-max md:ml-8">{buttonText}</Button>
+            <Button
+                className="w-full md:w-max md:ml-8"
+                onClick={copyToClipboard}
+            >
+                {buttonText}
+            </Button>
         </div>
     )
 }
