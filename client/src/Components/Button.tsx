@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react'
-import styles from './Button.module.css'
+import classNames from 'classnames'
 
 interface Props {
     color?: string
@@ -12,12 +12,26 @@ export const Button: FunctionComponent<Props> = ({
     onClick
 }) => {
     return (
-        <button
-            className={`focus:outline-none ${styles['button']}`}
-            onClick={onClick}
-        >
+        <button className={classNames('focus:outline-none', 'group')}>
             <div
-                className={`px-6 py-4 uppercase font-extrabold border-black border-8 select-none ${color} ${styles['button__content']}`}
+                className={classNames(
+                    'px-6',
+                    'py-4',
+                    'uppercase',
+                    'font-extrabold',
+                    'border-black',
+                    'border-8',
+                    'select-none',
+                    'shadow-dark',
+                    'group-hover:shadow-hidden-dark',
+                    'transition',
+                    'transform',
+                    'group-hover:translate-y-8px',
+                    'group-hover:translate-x-8px',
+                    'ease-expo',
+                    'duration-200',
+                    color
+                )}
             >
                 {children}
             </div>
