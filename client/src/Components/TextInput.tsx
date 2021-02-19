@@ -1,9 +1,7 @@
 import { FunctionComponent } from 'react'
 import classNames from 'classnames'
 
-interface Props {
-    placeholder: string
-}
+type Props = React.InputHTMLAttributes<HTMLInputElement>
 
 export const TextInput: FunctionComponent<Props> = (props) => {
     return (

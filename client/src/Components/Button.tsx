@@ -3,14 +3,20 @@ import classNames from 'classnames'
 
 interface Props {
     color?: string
+    className?: string
 }
 
 export const Button: FunctionComponent<Props> = ({
-    color = 'bg-white',
+    color = 'bg-yellow-300',
+    className = '',
     children
 }) => {
     return (
-        <button className={classNames('focus:outline-none', 'group')}>
+        <button
+            className={
+                classNames('focus:outline-none', 'group') + ' ' + className
+            }
+        >
             <div
                 className={classNames(
                     'px-6',
@@ -28,6 +34,7 @@ export const Button: FunctionComponent<Props> = ({
                     'group-hover:translate-x-8px',
                     'ease-expo',
                     'duration-200',
+                    'min-w-max',
                     color
                 )}
             >

@@ -6,6 +6,7 @@
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Home } from './Home'
 import { _404 } from './_404'
+import { History } from './History'
 
 const Routes = (
     <BrowserRouter>
@@ -13,6 +14,8 @@ const Routes = (
             <Route path="/" exact>
                 <Home />
             </Route>
+            {/* @TODO Fetch history from API */}
+            <Route path="/history" exact component={History} />
             <Route path="*">
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <_404 />
