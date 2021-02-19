@@ -19,6 +19,12 @@ export const redirectRequestHandler = (urlManager: UrlManager) => {
         res: Response
     ) => {
         try {
+            if (!(await urlManager.exists(req.params.shortUrlId))) {
+                return res.status(StatusCodes.NOT_FOUND).json({
+                    error: 'Error fetching url, not found'
+                })
+            }
+
             const targetUrl = await urlManager.getTargetUrl(
                 req.params.shortUrlId
             )
