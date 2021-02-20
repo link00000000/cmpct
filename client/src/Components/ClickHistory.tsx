@@ -4,6 +4,7 @@ import type { ClickHistory as IClickHistory } from '../../../src/ClickHistoryMan
 import { ClickHistoryEntry } from './ClickHistoryEntry'
 
 export const ClickHistory: FunctionComponent = () => {
+    // @TODO Replace `val` and `vals` with real fetched data
     const val = {
         time: new Date().getTime(),
         city: 'Akron',
