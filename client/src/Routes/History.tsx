@@ -1,4 +1,5 @@
 import { FunctionComponent } from 'react'
+import { ClickHistory } from '../Components/ClickHistory'
 import { Map } from '../Components/Map'
 import { TextCopy } from '../Components/TextCopy'
 
@@ -15,6 +16,8 @@ export const History: FunctionComponent = () => {
                 display={'@TODO cmpct.tk/someUrl'}
                 value={'@TODO https://cmpct.tk/someUrl'}
             />
+
+            <ClickHistory />
         </div>
     )
 }
