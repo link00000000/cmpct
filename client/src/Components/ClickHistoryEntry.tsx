@@ -26,11 +26,11 @@ export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
         <div>
             <h2 className="text-lg">
                 <span className="font-black uppercase">{title}</span>
-                <span className="float-right">
+                <span className="md:float-right block">
                     {DateTime.fromMillis(data.time).toFormat('DD @ t')}
                 </span>
             </h2>
-            <ul className="grid grid-cols-2 gap-x-4 mt-4">
+            <ul className="grid md:grid-cols-2 gap-x-4 mt-4">
                 <TableEntry label="IP" value={data.ip} />
                 <TableEntry
                     label="Longitude / Latitude"
