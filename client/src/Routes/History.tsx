@@ -4,11 +4,21 @@ import { Map } from '../Components/Map'
 import { TextCopy } from '../Components/TextCopy'
 import { Button } from '../Components/Button'
 import { useHistory } from 'react-router-dom'
+import { Modal } from '../Components/Modal'
+import { useState } from 'react'
 
 export const History: FunctionComponent = () => {
     const history = useHistory()
 
-    const handleDelete = () => {
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+
+    const handleDeleteModalCancel = () => {
+        setShowDeleteModal(false)
+    }
+
+    const handleDeleteModalConfirm = () => {
+        setShowDeleteModal(false)
+
         // @TODO Handle delete with API
         history.push('/')
     }
@@ -28,9 +38,25 @@ export const History: FunctionComponent = () => {
 
             <ClickHistory />
 
-            <Button color="bg-red-500" onClick={handleDelete}>
+            <Button
+                color="bg-red-500"
+                onClick={() => {
+                    setShowDeleteModal(true)
+                }}
+            >
                 Delete CMPCT Link
             </Button>
+
+            <Modal
+                title="Delete CMPCT Link"
+                confirmText="Delete CMPCT Link"
+                show={showDeleteModal}
+                onCancel={handleDeleteModalCancel}
+                onSubmit={handleDeleteModalConfirm}
+            >
+                Are you sure you want to delete this link? This action cannot be
+                undone!
+            </Modal>
         </div>
     )
 }
