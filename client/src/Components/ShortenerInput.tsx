@@ -19,6 +19,7 @@ export const ShortenerInput: FunctionComponent = () => {
     }
 
     const handleSubmit = async () => {
+        console.log('SUBMIT')
         const urlRegExpMatcher = RegExp(/^https?:\/\/.+\..+/)
         const regExpResult = input?.match(urlRegExpMatcher)
 
