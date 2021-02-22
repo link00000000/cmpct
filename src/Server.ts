@@ -41,6 +41,13 @@ export class Server {
         } else {
             // Serve static files if in production
             this.app.use('/', express.static(resolve('client/build')))
+
+            // If no static files are found, the URL probably needs to be
+            // handled by react-router-dom. Because of this, react-router-dom
+            // will handle 404s
+            this.app.get('*', (_req, res) =>
+                res.sendFile(resolve('client/build/index.html'))
+            )
         }
 
         this.server.listen(port)

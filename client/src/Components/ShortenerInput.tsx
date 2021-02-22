@@ -12,11 +12,14 @@ export const ShortenerInput: FunctionComponent = () => {
         null
     )
 
+    console.log('Loaded shortener input')
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value)
     }
 
     const handleSubmit = async () => {
+        console.log('SUBMIT')
         const urlRegExpMatcher = RegExp(/^https?:\/\/.+\..+/)
         const regExpResult = input?.match(urlRegExpMatcher)
 
