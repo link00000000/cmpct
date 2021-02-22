@@ -7,12 +7,21 @@ services:
         ports:
             - 6379:6379
 
+    mongo:
+        image: mongo
+        volumes:
+            - mongo-data:/data
+        ports:
+            - 27017:27017
+
     cmpct:
         build: .
         ports:
             - 80:8080
         environment:
             - REDIS_HOST=redis
+            - MONGO_HOST=mongo
 
 volumes:
     redis-data:
+    mongo-data:
