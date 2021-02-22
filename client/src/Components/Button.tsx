@@ -1,7 +1,7 @@
-import { FunctionComponent } from 'react'
+import { ButtonHTMLAttributes, FunctionComponent } from 'react'
 import classNames from 'classnames'
 
-interface Props {
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     color?: string
     className?: string
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
@@ -11,7 +11,8 @@ export const Button: FunctionComponent<Props> = ({
     color = 'bg-yellow-300',
     className = '',
     children,
-    onClick
+    onClick,
+    ...props
 }) => {
     return (
         <button
@@ -19,6 +20,7 @@ export const Button: FunctionComponent<Props> = ({
                 classNames('focus:outline-none', 'group') + ' ' + className
             }
             onClick={onClick}
+            {...props}
         >
             <div
                 className={classNames(

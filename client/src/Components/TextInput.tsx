@@ -1,13 +1,13 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, InputHTMLAttributes } from 'react'
 import classNames from 'classnames'
 
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
     onEnter?: () => void
 }
 
-export const TextInput: FunctionComponent<Props> = (props) => {
+export const TextInput: FunctionComponent<Props> = ({ onEnter, ...props }) => {
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter' && props.onEnter) props.onEnter()
+        if (event.key === 'Enter' && onEnter) onEnter()
     }
 
     return (

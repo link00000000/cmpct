@@ -6,7 +6,7 @@
     "author": "link00000000 <crandall.logan@gmail.com>",
     "license": "MIT",
     "engines": {
-        "node": "14.9.x",
+        "node": "14.x",
         "yarn": "1.22.x"
     },
     "devDependencies": {
@@ -30,6 +30,7 @@
         "async-redis": "^1.1.7",
         "axios": "^0.21.1",
         "body-parser": "^1.19.0",
+        "cross-env": "^7.0.3",
         "express": "^4.17.1",
         "http-proxy-middleware": "^1.0.6",
         "http-status-codes": "^2.1.4",
@@ -39,7 +40,7 @@
         "winston": "^3.3.3"
     },
     "scripts": {
-        "start": "node build",
+        "start": "cross-env NODE_ENV=production node build",
         "clean": "rimraf build logs node_modules client/build client/node_modules *.log",
         "build": "run-p --print-label --print-name build:*",
         "build:server": "tsc",
