@@ -6,7 +6,7 @@
     "author": "link00000000 <crandall.logan@gmail.com>",
     "license": "MIT",
     "engines": {
-        "node": "14.9.x",
+        "node": "14.x",
         "yarn": "1.22.x"
     },
     "devDependencies": {
@@ -48,6 +48,8 @@
         "dev:client": "cross-env BROWSER=none NODE_ENV=development yarn --cwd client start",
         "lint:files": "prettier --write --ignore-unknown --ignore-path .gitignore",
         "lint": "npm run lint:files .",
+        "mongo:start": "docker-compose up -d mongo",
+        "mongo:attach": "docker-compose exec mongo mongo",
         "redis:start": "docker-compose up -d redis",
         "redis:attach": "docker-compose exec redis redis-cli",
         "heroku:deploy": "run-s heroku:dependencies build",

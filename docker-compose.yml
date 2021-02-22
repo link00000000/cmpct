@@ -7,12 +7,12 @@ services:
         ports:
             - 6379:6379
 
-    #mongodb:
-    #    image: mongo
-    #    volumes:
-    #        - mongo-data:/data
-    #    ports:
-    #        - 27017:27017
+    mongo:
+        image: mongo
+        volumes:
+            - mongo-data:/data
+        ports:
+            - 27017:27017
 
     cmpct:
         build: .
@@ -24,4 +24,4 @@ services:
 
 volumes:
     redis-data:
-    #mongo-data:
+    mongo-data:
