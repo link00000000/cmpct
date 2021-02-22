@@ -1,6 +1,6 @@
-# cmpct
+# cmpct 🗜
 
-[![Heroku](https://heroku-badge.herokuapp.com/?app=cmpct)](https://cmpct.tk)
+[![Heroku](https://pyheroku-badge.herokuapp.com/?app=cmpct&style=flat-square)](https://cmpct.tk)
 
 A URL shrtnr
 
