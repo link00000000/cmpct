@@ -14,7 +14,7 @@ const Routes = (
         <Switch>
             <Route path="/" exact component={Home} />
             {/* @TODO Fetch history from API */}
-            <Route path="/history" exact component={History} />
+            <Route path="/history/:channel" exact component={History} />
             <Route path="/:shortUrl" exact component={Redirect} />
             <Route path="*" component={_404} />
         </Switch>
