@@ -37,18 +37,15 @@ export class PubSub {
      * Broadcast a message to all subscribed clients
      * @param data Payload to send
      */
-    publish(data: {} | string) {
-        if (data instanceof String) {
-            this.subscriptions.forEach((socket) => {
-                socket.send(data)
-            })
-        } else {
-            // If the payload is an object, we have to convert it to a string
-            // before sending it
-            this.subscriptions.forEach((socket) => {
-                socket.send(JSON.stringify(data))
-            })
-        }
+    publish<T>(data: T) {
+        // If the payload is an object, we have to convert it to a string
+        // before sending it
+        const stringData =
+            data instanceof Object ? JSON.stringify(data) : String(data)
+
+        this.subscriptions.forEach((socket) => {
+            socket.send(stringData)
+        })
     }
 
     /**

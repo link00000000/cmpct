@@ -15,7 +15,7 @@ export interface HistorySocketPayload {
  * Outgoing data from `HistorySocket`
  */
 export interface HistorySocketResponse {
-    error?: boolean
+    type: 'message' | 'error' | 'data'
     data: ClickHistoryEntry | { message: string }
 }
 
@@ -23,6 +23,7 @@ export interface HistorySocketResponse {
  * Standard success response message
  */
 const HISTORY_SOCKET_RESPONSE_SUCCESS = JSON.stringify({
+    type: 'message',
     data: { message: 'OK' }
 })
 
@@ -57,7 +58,7 @@ export class HistorySocket {
                     )
 
                     const response: HistorySocketResponse = {
-                        error: true,
+                        type: 'error',
                         data: { message: 'Unable to parse payload' }
                     }
                     socket.send(JSON.stringify(response))
@@ -71,7 +72,7 @@ export class HistorySocket {
                     logger.error('Malformed payload: ' + data.toString().trim())
 
                     const response: HistorySocketResponse = {
-                        error: true,
+                        type: 'error',
                         data: { message: 'Malformed payload' }
                     }
                     socket.send(JSON.stringify(response))
@@ -95,7 +96,7 @@ export class HistorySocket {
                         logger.error(message + ' to ' + channel)
 
                         const response: HistorySocketResponse = {
-                            error: true,
+                            type: 'error',
                             data: { message }
                         }
                         socket.send(JSON.stringify(response))
@@ -113,7 +114,7 @@ export class HistorySocket {
                     if (!this.channels.has(channel)) {
                         // Unsubscribing from a channel that does not exist
                         const response: HistorySocketResponse = {
-                            error: true,
+                            type: 'error',
                             data: { message: 'Channel not found' }
                         }
 
@@ -133,7 +134,7 @@ export class HistorySocket {
                         logger.error(message + ' to ' + channel)
 
                         const response: HistorySocketResponse = {
-                            error: true,
+                            type: 'error',
                             data: { message }
                         }
                         socket.send(JSON.stringify(response))
@@ -178,6 +179,9 @@ export class HistorySocket {
         // If there is nobody subscribed, don't publish
         if (!this.channels.has(shortId)) return
 
-        this.channels.get(shortId)?.publish(payload)
+        this.channels.get(shortId)?.publish<HistorySocketResponse>({
+            type: 'data',
+            data: payload
+        })
     }
 }
