@@ -3,17 +3,24 @@ import classNames from 'classnames'
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
     color?: string
+    className?: string
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 export const Button: FunctionComponent<Props> = ({
-    color = 'bg-white',
+    color = 'bg-yellow-300',
+    className = '',
     children,
+    onClick,
     ...props
 }) => {
     return (
         <button
+            className={
+                classNames('focus:outline-none', 'group') + ' ' + className
+            }
+            onClick={onClick}
             {...props}
-            className={classNames('focus:outline-none', 'group')}
         >
             <div
                 className={classNames(
@@ -32,6 +39,7 @@ export const Button: FunctionComponent<Props> = ({
                     'group-hover:translate-x-8px',
                     'ease-expo',
                     'duration-200',
+                    'min-w-max',
                     color
                 )}
             >

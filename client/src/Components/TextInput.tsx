@@ -13,8 +13,8 @@ export const TextInput: FunctionComponent<Props> = ({ onEnter, ...props }) => {
     return (
         <input
             type="text"
-            {...props}
             onKeyDown={handleKeyDown}
+            {...props}
             className={classNames(
                 'focus:text-gray-800',
                 'text-gray-500',

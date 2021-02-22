@@ -7,11 +7,14 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { Home } from './Home'
 import { Redirect } from './Redirect'
 import { _404 } from './_404'
+import { History } from './History'
 
 const Routes = (
     <BrowserRouter>
         <Switch>
             <Route path="/" exact component={Home} />
+            {/* @TODO Fetch history from API */}
+            <Route path="/history" exact component={History} />
             <Route path="/:shortUrl" exact component={Redirect} />
             <Route path="*" component={_404} />
         </Switch>

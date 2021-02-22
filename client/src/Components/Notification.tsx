@@ -1,4 +1,6 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useEffect } from 'react'
+import { useTimer } from '../Hooks/Timer'
+import classNames from 'classnames'
 
 export enum NotificationType {
     info,
@@ -10,7 +12,9 @@ interface Props {
     type?: NotificationType
     canDismiss?: boolean
     show?: boolean
-    onClose?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+    duration?: number
+    autoDismiss?: boolean
+    onClose?: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 }
 
 export const Notification: FunctionComponent<Props> = ({
@@ -18,6 +22,8 @@ export const Notification: FunctionComponent<Props> = ({
     type = NotificationType.info,
     canDismiss = true,
     show = true,
+    duration = 5000,
+    autoDismiss = true,
     onClose
 }) => {
     const colors = {
@@ -26,9 +32,46 @@ export const Notification: FunctionComponent<Props> = ({
         [NotificationType.warning]: 'bg-yellow-500'
     }
 
+    const timer = useTimer(duration)
+
+    useEffect(() => {
+        // On timer end
+        if (timer.isDone && onClose) {
+            timer.reset()
+            onClose()
+        }
+    }, [timer.isDone])
+
+    useEffect(() => {
+        // Start timer
+        if (show && autoDismiss) {
+            timer.reset()
+            timer.start()
+        }
+    }, [show])
+
+    const handleClose = () => {
+        timer.reset()
+        if (onClose) {
+            onClose()
+        }
+    }
+
     return (
         <div
-            className={`px-6 py-4 fixed w-full bottom-0 left-0 ${colors[type]} text-white font-sans font-bold text-lg text-center`}
+            className={classNames(
+                'px-6',
+                'py-4',
+                'fixed',
+                'w-full',
+                'bottom-0',
+                'left-0',
+                'text-white',
+                'font-bold',
+                'text-lg',
+                'text-center',
+                colors[type]
+            )}
             style={{
                 transform: `translateY(${show ? '0' : '100%'})`,
                 transition: 'transform 200ms'
@@ -36,10 +79,11 @@ export const Notification: FunctionComponent<Props> = ({
         >
             <span>{children}</span>
 
+            {/* Close button */}
             {canDismiss && (
                 <button
                     className="w-5 absolute right-6 top-5"
-                    onClick={onClose}
+                    onClick={handleClose}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -56,6 +100,24 @@ export const Notification: FunctionComponent<Props> = ({
                     </svg>
                 </button>
             )}
+
+            {/* Progress bar */}
+            <div
+                className={classNames(
+                    'absolute',
+                    'left-0',
+                    'bottom-0',
+                    'bg-black',
+                    'opacity-50',
+                    'h-8px',
+                    timer.isRunning && 'transition-all',
+                    'duration-1000',
+                    'ease-linear'
+                )}
+                style={{
+                    width: (timer.currentTime / (duration - 1000)) * 100 + '%'
+                }}
+            ></div>
         </div>
     )
 }
