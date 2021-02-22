@@ -1,7 +1,7 @@
 import ws from 'ws'
 import { PubSub } from '../PubSub'
 import { logger } from '../Logger'
-import { ClickHistoryEntry } from '../ClickHistoryManager'
+import { ClickHistoryEntry, ClickHistoryManager } from '../ClickHistoryManager'
 
 /**
  * Incoming data to `HistorySocket`
@@ -154,6 +154,16 @@ export class HistorySocket {
 
             socket.on('close', () => {
                 logger.info('Subscription to history socket closed')
+            })
+
+            socket.on('error', (error) => {
+                if (error instanceof Object && !(error instanceof Error)) {
+                    logger.error(JSON.stringify(error))
+                } else if (error instanceof Error) {
+                    logger.error(error.message)
+                } else {
+                    logger.error(error)
+                }
             })
         })
     }

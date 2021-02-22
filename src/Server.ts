@@ -1,4 +1,3 @@
-import { ClickHistoryManager } from './ClickHistoryManager'
 import express = require('express')
 import http = require('http')
 import { resolve } from 'app-root-path'
@@ -6,21 +5,19 @@ import bodyParser from 'body-parser'
 import type winston from 'winston'
 import { createProxyMiddleware } from 'http-proxy-middleware'
 import ws from 'ws'
-import { HistorySocket } from './Sockets/HistorySocket'
 
 /**
  * An HTTP server that uses express. Routes can be added using the `routes`
  * property before starting. Server is started using `start` method.
  */
 export class Server {
-    public api = express.Router()
-
     private app = express()
-    private server = http.createServer(this.app)
-    private wss = new ws.Server({ server: this.server })
+    private httpServer = http.createServer(this.app)
     private readonly defaultPort = process.env.PORT
         ? parseInt(process.env.PORT)
         : 8080
+
+    public api = express.Router()
 
     constructor(private logger: winston.Logger) {}
 
@@ -54,25 +51,16 @@ export class Server {
             )
         }
 
-        // Connect an instance of `HistorySocket` to the webserver, create
-        // `ClickHistoryManager to interact with `HistorySocket`
-        const historySocket = new HistorySocket(this.wss)
-        const clickHistoryManager = new ClickHistoryManager(historySocket)
-
-        // @FIXME This is test data that spams connected clients, should be
-        // removed later
-        setInterval(() => {
-            clickHistoryManager.addEntry('testId', {
-                ip: '127.0.0.1',
-                time: new Date().getTime(),
-                browser: 'None',
-                city: 'Akron',
-                os: 'Windows 10'
-            })
-        }, 1000)
-
-        this.server.listen(port)
+        this.httpServer.listen(port)
         this.onListening(port, 'localhost')
+    }
+
+    /**
+     * Create a WebSocket server using the internal HTTP server
+     * @param path Endpoint to serve websocket requests
+     */
+    createWSS(path: string) {
+        return new ws.Server({ server: this.httpServer, path })
     }
 
     /**
