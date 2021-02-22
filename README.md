@@ -8,6 +8,7 @@ A URL shrtnr
 
 -   yarn
 -   redis
+-   MongoDB
 
 It is assumed there is already a redis server running on localhost
 
@@ -36,7 +37,7 @@ yarn start
 ## Docker 🐳
 
 ```shell
-docker up
+docker-compose up
 ```
 
 ## Useful Scripts ⚙
