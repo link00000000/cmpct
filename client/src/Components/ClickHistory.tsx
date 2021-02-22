@@ -16,6 +16,7 @@ interface Props {
 export const ClickHistory: FunctionComponent<Props> = (props) => {
     const socket = useRef<WebSocket>()
 
+    // @TODO Fill initial array with fetched HTTP data
     const [clicks, setClicks] = useState<IClickHistory>([])
 
     useEffect(() => {
