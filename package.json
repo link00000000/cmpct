@@ -6,7 +6,7 @@
     "author": "link00000000 <crandall.logan@gmail.com>",
     "license": "MIT",
     "engines": {
-        "node": "14.9.x",
+        "node": "14.x",
         "yarn": "1.22.x"
     },
     "devDependencies": {
