@@ -13,6 +13,7 @@ import ws from 'ws'
 export class Server {
     private app = express()
     private httpServer = http.createServer(this.app)
+    private wsServers = new Map<string, ws.Server>()
     private readonly defaultPort = process.env.PORT
         ? parseInt(process.env.PORT)
         : 8080
@@ -51,6 +52,22 @@ export class Server {
             )
         }
 
+        // Initialize WebSocket servers that have been registered
+        const self = this
+        this.httpServer.on('upgrade', (request, socket, head) => {
+            const path = request.url
+
+            if (self.wsServers.has(path)) {
+                const wss = self.wsServers.get(path)
+                if (!wss) return
+
+                wss.handleUpgrade(request, socket, head, (webSocket) => {
+                    console.log('Upgrade WebSocket connection: ' + path)
+                    wss.emit('connection', webSocket, request)
+                })
+            }
+        })
+
         this.httpServer.listen(port)
         this.onListening(port, 'localhost')
     }
@@ -60,7 +77,13 @@ export class Server {
      * @param path Endpoint to serve websocket requests
      */
     createWSS(path: string) {
-        return new ws.Server({ server: this.httpServer, path })
+        if (this.wsServers.has(path)) {
+            throw new Error('Path already in use')
+        }
+
+        const wss = new ws.Server({ noServer: true })
+        this.wsServers.set(path, wss)
+        return wss
     }
 
     /**
