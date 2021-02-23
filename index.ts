@@ -35,6 +35,8 @@ setInterval(() => {
         time: new Date().getTime(),
         browser: 'None',
         city: 'Akron',
+        country: 'United States',
+        state: 'Ohio',
         os: 'Windows 10',
         coordinates: {
             longitude: randRange(-180, 180),
