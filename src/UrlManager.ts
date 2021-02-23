@@ -4,7 +4,7 @@ import type winston from 'winston'
 
 /**
  * Manager of shortened URLs. This class is responsible for interfacing
- * with databases instead of interacting with databases directly
+ * with Redis instead of interacting with databases directly
  */
 export class UrlManager {
     private static shortUrlGeneratorAlphabet =

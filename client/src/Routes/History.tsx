@@ -3,11 +3,17 @@ import { ClickHistory } from '../Components/ClickHistory'
 import { Map } from '../Components/Map'
 import { TextCopy } from '../Components/TextCopy'
 import { Button } from '../Components/Button'
-import { useHistory } from 'react-router-dom'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { Modal } from '../Components/Modal'
 import { useState } from 'react'
 
-export const History: FunctionComponent = () => {
+interface RouteInfo {
+    channel: string
+}
+
+type Props = RouteComponentProps<RouteInfo>
+
+export const History: FunctionComponent<Props> = (props) => {
     const history = useHistory()
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
@@ -36,7 +42,7 @@ export const History: FunctionComponent = () => {
                 value={'@TODO https://cmpct.tk/someUrl'}
             />
 
-            <ClickHistory />
+            <ClickHistory channel={props.match.params.channel} />
 
             <Button
                 color="bg-red-500"

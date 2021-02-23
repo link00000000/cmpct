@@ -1,4 +1,5 @@
-import type { DateTime } from 'luxon'
+import { logger } from './Logger'
+import { HistorySocket } from './Sockets/HistorySocket'
 
 export interface ClickHistoryEntry {
     time: number
@@ -26,3 +27,17 @@ export interface ClickHistoryEntry {
 }
 
 export type ClickHistory = ClickHistoryEntry[]
+
+/**
+ * Manager of click history transactions. This class is responsible for all
+ * interactions with MongoDB instead of interacting with databases directly
+ */
+export class ClickHistoryManager {
+    constructor(private socketConnections: HistorySocket) {}
+
+    addEntry(shortId: string, entry: ClickHistoryEntry) {
+        // @TODO Commit to DB
+        this.socketConnections.publish(shortId, entry)
+        logger.info(`Add new entry to click history of ${shortId}: ${entry.ip}`)
+    }
+}

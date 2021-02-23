@@ -4,19 +4,20 @@ import { resolve } from 'app-root-path'
 import bodyParser from 'body-parser'
 import type winston from 'winston'
 import { createProxyMiddleware } from 'http-proxy-middleware'
+import ws from 'ws'
 
 /**
  * An HTTP server that uses express. Routes can be added using the `routes`
  * property before starting. Server is started using `start` method.
  */
 export class Server {
-    public api = express.Router()
-
     private app = express()
-    private server = http.createServer(this.app)
+    private httpServer = http.createServer(this.app)
     private readonly defaultPort = process.env.PORT
         ? parseInt(process.env.PORT)
         : 8080
+
+    public api = express.Router()
 
     constructor(private logger: winston.Logger) {}
 
@@ -50,8 +51,16 @@ export class Server {
             )
         }
 
-        this.server.listen(port)
+        this.httpServer.listen(port)
         this.onListening(port, 'localhost')
+    }
+
+    /**
+     * Create a WebSocket server using the internal HTTP server
+     * @param path Endpoint to serve websocket requests
+     */
+    createWSS(path: string) {
+        return new ws.Server({ server: this.httpServer, path })
     }
 
     /**
