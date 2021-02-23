@@ -62,7 +62,7 @@ export class Server {
                 if (!wss) return
 
                 wss.handleUpgrade(request, socket, head, (webSocket) => {
-                    console.log('Upgrade WebSocket connection: ' + path)
+                    self.logger.info('Upgrade WebSocket connection: ' + path)
                     wss.emit('connection', webSocket, request)
                 })
             }
