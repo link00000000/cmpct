@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { MongoClient } from 'mongodb'
 import { logger } from './Logger'
 import { HistorySocket } from './Sockets/HistorySocket'
 
@@ -38,14 +39,32 @@ export class ClickHistoryManager {
 
     constructor(private socketConnections: HistorySocket) {
         if (process.env.MONGO_URL) {
-            mongoose.connect(process.env.MONGO_URL)
-            this.mongoClient = mongoose.connection
+            this.mongoClient = new MongoClient(process.env.MONGO_URL, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            })
         } else {
-            mongoose.connect('mongodb://localhost:27017/cmpct')
-            this.mongoClient = mongoose.connection
+            this.mongoClient = new MongoClient(
+                'mongodb://localhost:27017/cmpct',
+                { useNewUrlParser: true, useUnifiedTopology: true }
+            )
         }
 
+        this.mongoSetup()
+
         this.mongoClient.on('error', this.mongoErrorHandler)
+    }
+
+    private async mongoSetup() {
+        try {
+            await this.mongoClient.connect()
+            await this.mongoClient.db('cmpct').command({ ping: 1 })
+            this.mongoClient.db('cmpct').createCollection('analytics')
+        } catch (error) {
+            logger.error(error)
+        }
+
+        logger.info('Mongo Connection Successful')
     }
 
     /**
