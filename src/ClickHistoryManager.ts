@@ -51,7 +51,10 @@ export class ClickHistoryManager {
         }
 
         this.mongoSetup()
-
+        this.addDocument(
+            'http://cmpct.tk/some-test-url',
+            'http://cmpct.tk/shrt'
+        )
         this.mongoClient.on('error', this.mongoErrorHandler)
     }
 
@@ -83,5 +86,28 @@ export class ClickHistoryManager {
         // @TODO Commit to DB
         this.socketConnections.publish(shortId, entry)
         logger.info(`Add new entry to click history of ${shortId}: ${entry.ip}`)
+    }
+
+    /**
+     * Add a new document
+     * @param UAL The Unique Analytic Link
+     * @param shortID The Short URL that the clickers will use
+     */
+    async addDocument(UAL: string, shortID: string) {
+        try {
+            await this.mongoClient
+                .db('cmpct')
+                .collection('analytics')
+                .insertOne({
+                    UAL: UAL,
+                    shrt: shortID,
+                    clickers: {}
+                })
+        } catch (error) {
+            logger.error(error)
+        }
+        logger.info(
+            `Document was added to the analytics collection with the UAL: ${UAL} and Short URL: ${shortID}`
+        )
     }
 }
