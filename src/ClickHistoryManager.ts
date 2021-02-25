@@ -112,7 +112,7 @@ export class ClickHistoryManager {
             if (!doc) throw new Error(`Document Not Found: ${UAL}`)
             doc.clicks = [entry, ...doc.clicks]
             await this.coll?.updateOne(
-                { UAL, short: shortId },
+                { UAL },
                 { $set: { doc } },
                 { upsert: true }
             )
