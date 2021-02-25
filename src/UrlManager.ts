@@ -9,7 +9,7 @@ import type winston from 'winston'
 export class UrlManager {
     private static shortUrlGeneratorAlphabet =
         '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-    private static shortUrlGeneratorLength = 8
+    private static shortUrlGeneratorLength = 6
     private static shortUrlGenerator = nanoid.customAlphabet(
         UrlManager.shortUrlGeneratorAlphabet,
         UrlManager.shortUrlGeneratorLength

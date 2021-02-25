@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb'
 import { logger } from './Logger'
 import { HistorySocket } from './Sockets/HistorySocket'
-import { urlAlphabet } from 'nanoid'
+import nanoid from 'nanoid'
 import { Collection } from 'mongodb'
 
 export interface ClickHistoryEntry {
@@ -42,6 +42,14 @@ export type ClickHistory = ClickHistoryEntry[]
  * interactions with MongoDB instead of interacting with databases directly
  */
 export class ClickHistoryManager {
+    private static alphaUAL =
+        '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    private static lengthUAL = 6
+    private static generateUAL = nanoid.customAlphabet(
+        ClickHistoryManager.alphaUAL,
+        ClickHistoryManager.lengthUAL
+    )
+
     private mongoClient
 
     constructor(private socketConnections: HistorySocket) {
@@ -60,6 +68,16 @@ export class ClickHistoryManager {
         this.mongoClient.on('error', this.mongoErrorHandler)
     }
 
+    private async createUAL() {
+        let isUnique = false
+        let UAL = ''
+        do {
+            UAL = ClickHistoryManager.generateUAL()
+            if (!(await this.coll?.findOne({ UAL }))) isUnique = true
+        } while (!isUnique)
+        return UAL
+    }
+
     private coll?: Collection<ClickHistoryDocument>
 
     private async mongoSetup() {
@@ -76,17 +94,13 @@ export class ClickHistoryManager {
 
     public async test() {
         try {
-            await this.addDocument(
-                'http://cmpct.tk/history/UAL',
-                'http://cmpct.tk/shrt'
-            )
-            await this.updateEntry(
-                'http://cmpct.tk/history/UAL',
-                'http://cmpct.tk/shrt',
-                { time: 1, ip: 'test' }
-            )
-            await this.getDocument('http://cmpct.tk/history/UAL')
-            await this.removeDocument('http://cmpct.tk/history/UAL')
+            await this.addDocument('shrt')
+            let doc = await this.coll?.findOne({ short: 'shrt' })
+            if (!doc) throw Error(`Document not found`)
+            logger.info(JSON.stringify(doc))
+            await this.updateEntry(doc.UAL, 'shrt', { time: 1, ip: 'test' })
+            logger.info(JSON.stringify(await this.getDocument(doc.UAL)))
+            await this.removeDocument(doc.UAL)
         } catch (error) {
             logger.error(error)
         }
@@ -136,23 +150,24 @@ export class ClickHistoryManager {
      * @param UAL The Unique Analytic Link
      * @param shortID The Short URL that the clickers will use
      */
-    async addDocument(UAL: string, shortID: string) {
+    async addDocument(shortID: string) {
         if (!this.mongoClient.isConnected()) {
             await this.mongoSetup()
         }
 
         try {
+            const UAL = await this.createUAL()
             await this.coll?.insertOne({
                 UAL,
                 short: shortID,
                 clicks: []
             })
+            logger.info(
+                `Document was added to the analytics collection with the UAL: ${UAL} and Short URL: ${shortID}`
+            )
         } catch (error) {
             logger.error(error)
         }
-        logger.info(
-            `Document was added to the analytics collection with the UAL: ${UAL} and Short URL: ${shortID}`
-        )
     }
 
     /**
@@ -183,10 +198,10 @@ export class ClickHistoryManager {
 
         try {
             let doc = await this.coll?.findOne({ UAL })
-            logger.info(JSON.stringify(doc))
+            logger.info(`Found document associated with UAL: ${UAL}`)
+            return doc
         } catch (error) {
             logger.error(error)
         }
-        logger.info(`Found document associated with UAL: ${UAL}`)
     }
 }
