@@ -92,14 +92,20 @@ export class ClickHistoryManager {
         logger.info('Mongo Connection Successful')
     }
 
+    /**
+     * test the functions of the mongo api
+     */
     public async test() {
         try {
             await this.addDocument('shrt')
             let doc = await this.coll?.findOne({ short: 'shrt' })
+
             if (!doc) throw Error(`Document not found`)
             logger.info(JSON.stringify(doc))
+
             await this.updateEntry(doc.UAL, 'shrt', { time: 1, ip: 'test' })
             logger.info(JSON.stringify(await this.getDocument(doc.UAL)))
+
             await this.removeDocument(doc.UAL)
         } catch (error) {
             logger.error(error)
@@ -132,6 +138,7 @@ export class ClickHistoryManager {
         try {
             let doc = await this.coll?.findOne({ UAL })
             if (!doc) throw new Error(`Document Not Found: ${UAL}`)
+
             doc.clicks = [entry, ...doc.clicks]
             await this.coll?.updateOne(
                 { UAL },
