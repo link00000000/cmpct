@@ -64,7 +64,9 @@
         "redis:attach": "docker-compose exec redis redis-cli",
         "heroku:deploy": "run-s heroku:dependencies build",
         "heroku:dependencies": "cd client && yarn",
-        "heroku-postbuild": "yarn heroku:deploy"
+        "heroku-postbuild": "yarn heroku:deploy",
+        "down": "docker-compose down",
+        "db:reset": "docker volume rm cmpct_mongo-data cmpct_redis-data"
     },
     "husky": {
         "hooks": {
