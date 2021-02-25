@@ -35,7 +35,9 @@ export const History: FunctionComponent<Props> = (props) => {
 
     useEffect(() => {
         console.log('start')
-        socket.current = new WebSocket('ws://localhost:8080/api/history')
+        socket.current = new WebSocket(
+            `ws://${window.location.host}/api/history`
+        )
 
         socket.current.onopen = () => {
             console.log('socket opened')
