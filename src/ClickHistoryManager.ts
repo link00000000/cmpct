@@ -85,6 +85,8 @@ export class ClickHistoryManager {
                 'http://cmpct.tk/shrt',
                 { time: 1, ip: 'test' }
             )
+            await this.getDocument('http://cmpct.tk/history/UAL')
+            await this.removeDocument('http://cmpct.tk/history/UAL')
         } catch (error) {
             logger.error(error)
         }
@@ -102,6 +104,12 @@ export class ClickHistoryManager {
         }
     }
 
+    /**
+     * Update an entry in an existing document using the UAL to search
+     * @param UAL Unique Analytic Link
+     * @param shortId Short URL
+     * @param entry New Click
+     */
     async updateEntry(UAL: string, shortId: string, entry: ClickHistoryEntry) {
         if (!this.mongoClient.isConnected()) {
             await this.mongoSetup()
@@ -145,5 +153,40 @@ export class ClickHistoryManager {
         logger.info(
             `Document was added to the analytics collection with the UAL: ${UAL} and Short URL: ${shortID}`
         )
+    }
+
+    /**
+     * remove a document
+     * @param UAL Unique Analytic Link
+     */
+    async removeDocument(UAL: string) {
+        if (!this.mongoClient.isConnected()) {
+            await this.mongoSetup()
+        }
+
+        try {
+            await this.coll?.deleteOne({ UAL })
+        } catch (error) {
+            logger.error(error)
+        }
+        logger.info(`Document associated with UAL: ${UAL} removed`)
+    }
+
+    /**
+     * Retrieve document
+     * @param UAL Unique Analytic Link
+     */
+    async getDocument(UAL: string) {
+        if (!this.mongoClient.isConnected()) {
+            await this.mongoSetup()
+        }
+
+        try {
+            let doc = await this.coll?.findOne({ UAL })
+            logger.info(JSON.stringify(doc))
+        } catch (error) {
+            logger.error(error)
+        }
+        logger.info(`Found document associated with UAL: ${UAL}`)
     }
 }
