@@ -2,6 +2,7 @@ import { MongoClient } from 'mongodb'
 import { logger } from './Logger'
 import { HistorySocket } from './Sockets/HistorySocket'
 import { urlAlphabet } from 'nanoid'
+import { Collection } from 'mongodb'
 
 export interface ClickHistoryEntry {
     time: number
@@ -28,6 +29,12 @@ export interface ClickHistoryEntry {
     }
 }
 
+export interface ClickHistoryDocument {
+    UAL: string
+    short: string
+    clicks: ClickHistory
+}
+
 export type ClickHistory = ClickHistoryEntry[]
 
 /**
@@ -50,16 +57,16 @@ export class ClickHistoryManager {
             )
         }
 
-        this.mongoSetup()
-        this.test()
         this.mongoClient.on('error', this.mongoErrorHandler)
     }
+
+    private coll?: Collection<ClickHistoryDocument>
 
     private async mongoSetup() {
         try {
             await this.mongoClient.connect()
             await this.mongoClient.db('cmpct').command({ ping: 1 })
-            await this.mongoClient.db('cmpct').createCollection('analytics')
+            this.coll = this.mongoClient.db('cmpct').collection('analytics')
         } catch (error) {
             logger.error(error)
         }
@@ -67,12 +74,20 @@ export class ClickHistoryManager {
         logger.info('Mongo Connection Successful')
     }
 
-    private async test() {
-        await this.addDocument(
-            'http://cmpct.tk/some-test-url',
-            'http://cmpct.tk/shrt'
-        )
-        await this.addEntry('http://cmpct.tk/shrt', { time: 1, ip: 'test' })
+    public async test() {
+        try {
+            await this.addDocument(
+                'http://cmpct.tk/history/UAL',
+                'http://cmpct.tk/shrt'
+            )
+            await this.updateEntry(
+                'http://cmpct.tk/history/UAL',
+                'http://cmpct.tk/shrt',
+                { time: 1, ip: 'test' }
+            )
+        } catch (error) {
+            logger.error(error)
+        }
     }
 
     /**
@@ -87,16 +102,20 @@ export class ClickHistoryManager {
         }
     }
 
-    async addEntry(shortId: string, entry: ClickHistoryEntry) {
-        // @TODO Commit to DB
+    async updateEntry(UAL: string, shortId: string, entry: ClickHistoryEntry) {
+        if (!this.mongoClient.isConnected()) {
+            await this.mongoSetup()
+        }
+
         try {
-            let doc = await this.mongoClient
-                .db('cmpct')
-                .collection('analytics')
-                .findOne({})
-            console.log('================================================')
-            console.log(doc)
-            console.log('================================================')
+            let doc = await this.coll?.findOne({ UAL })
+            if (!doc) throw new Error(`Document Not Found: ${UAL}`)
+            doc.clicks = [entry, ...doc.clicks]
+            await this.coll?.updateOne(
+                { UAL, short: shortId },
+                { $set: { doc } },
+                { upsert: true }
+            )
         } catch (error) {
             logger.error(error)
         }
@@ -110,15 +129,16 @@ export class ClickHistoryManager {
      * @param shortID The Short URL that the clickers will use
      */
     async addDocument(UAL: string, shortID: string) {
+        if (!this.mongoClient.isConnected()) {
+            await this.mongoSetup()
+        }
+
         try {
-            await this.mongoClient
-                .db('cmpct')
-                .collection('analytics')
-                .insertOne({
-                    UAL: UAL,
-                    shrt: shortID,
-                    clickers: {}
-                })
+            await this.coll?.insertOne({
+                UAL,
+                short: shortID,
+                clicks: []
+            })
         } catch (error) {
             logger.error(error)
         }
