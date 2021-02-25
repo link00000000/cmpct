@@ -1,7 +1,7 @@
-import mongoose from 'mongoose'
 import { MongoClient } from 'mongodb'
 import { logger } from './Logger'
 import { HistorySocket } from './Sockets/HistorySocket'
+import { urlAlphabet } from 'nanoid'
 
 export interface ClickHistoryEntry {
     time: number
@@ -51,10 +51,7 @@ export class ClickHistoryManager {
         }
 
         this.mongoSetup()
-        this.addDocument(
-            'http://cmpct.tk/some-test-url',
-            'http://cmpct.tk/shrt'
-        )
+        this.test()
         this.mongoClient.on('error', this.mongoErrorHandler)
     }
 
@@ -62,12 +59,20 @@ export class ClickHistoryManager {
         try {
             await this.mongoClient.connect()
             await this.mongoClient.db('cmpct').command({ ping: 1 })
-            this.mongoClient.db('cmpct').createCollection('analytics')
+            await this.mongoClient.db('cmpct').createCollection('analytics')
         } catch (error) {
             logger.error(error)
         }
 
         logger.info('Mongo Connection Successful')
+    }
+
+    private async test() {
+        await this.addDocument(
+            'http://cmpct.tk/some-test-url',
+            'http://cmpct.tk/shrt'
+        )
+        await this.addEntry('http://cmpct.tk/shrt', { time: 1, ip: 'test' })
     }
 
     /**
@@ -82,8 +87,19 @@ export class ClickHistoryManager {
         }
     }
 
-    addEntry(shortId: string, entry: ClickHistoryEntry) {
+    async addEntry(shortId: string, entry: ClickHistoryEntry) {
         // @TODO Commit to DB
+        try {
+            let doc = await this.mongoClient
+                .db('cmpct')
+                .collection('analytics')
+                .findOne({})
+            console.log('================================================')
+            console.log(doc)
+            console.log('================================================')
+        } catch (error) {
+            logger.error(error)
+        }
         this.socketConnections.publish(shortId, entry)
         logger.info(`Add new entry to click history of ${shortId}: ${entry.ip}`)
     }
