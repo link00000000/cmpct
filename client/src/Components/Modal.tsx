@@ -28,6 +28,7 @@ export const Modal: FunctionComponent<Props> = ({
             <div
                 className={classNames(
                     'fixed',
+                    'z-999999',
                     'left-0',
                     'top-0',
                     'w-full',

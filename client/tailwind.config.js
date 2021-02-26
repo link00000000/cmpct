@@ -7,6 +7,9 @@ module.exports = {
      */
     purge: ['./src/**/*.tsx'],
     theme: {
+        zIndex: {
+            999999: 999999
+        },
         boxShadow: {
             none: 'none',
             sm: '4px 4px 0 0 rgba(19 19 19 / 15%)',
