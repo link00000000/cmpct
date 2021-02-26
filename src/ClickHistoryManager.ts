@@ -1,7 +1,7 @@
 import { MongoClient, Collection } from 'mongodb'
 import { logger } from './Logger'
 import { HistorySocket } from './Sockets/HistorySocket'
-import nanoid from 'nanoid'
+import { RandomId } from './Utils/RandomId'
 
 export interface ClickHistoryEntry {
     time: number
@@ -41,14 +41,6 @@ export type ClickHistory = ClickHistoryEntry[]
  * interactions with MongoDB instead of interacting with databases directly
  */
 export class ClickHistoryManager {
-    private static alphaUAL =
-        '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-    private static lengthUAL = 6
-    private static generateUAL = nanoid.customAlphabet(
-        ClickHistoryManager.alphaUAL,
-        ClickHistoryManager.lengthUAL
-    )
-
     private mongoClient
     private collection?: Collection<ClickHistoryDocument>
 
@@ -68,11 +60,11 @@ export class ClickHistoryManager {
         this.mongoClient.on('error', this.mongoErrorHandler)
     }
 
-    private async createUAL() {
+    private async createHistoryId() {
         let isUnique = false
         let historyId = ''
         do {
-            historyId = ClickHistoryManager.generateUAL()
+            historyId = RandomId.generateId()
             if (!(await this.collection?.findOne({ historyId })))
                 isUnique = true
         } while (!isUnique)
@@ -95,6 +87,7 @@ export class ClickHistoryManager {
 
     /**
      * test the functions of the mongo api
+     * @TODO Remove this when it is no longer useful
      */
     public async test() {
         try {
@@ -170,14 +163,14 @@ export class ClickHistoryManager {
         }
 
         try {
-            const historyId = await this.createUAL()
+            const historyId = await this.createHistoryId()
             await this.collection?.insertOne({
                 historyId,
                 shortId,
                 clickHistory: []
             })
             logger.info(
-                `Document was added to the analytics collection with the UAL: ${historyId} and Short URL: ${shortId}`
+                `Document was added to the analytics collection with the historyId: ${historyId} and Short URL: ${shortId}`
             )
         } catch (error) {
             logger.error(error)
@@ -198,7 +191,7 @@ export class ClickHistoryManager {
         } catch (error) {
             logger.error(error)
         }
-        logger.info(`Document associated with UAL: ${historyId} removed`)
+        logger.info(`Document associated with historyId: ${historyId} removed`)
     }
 
     /**
@@ -212,7 +205,9 @@ export class ClickHistoryManager {
 
         try {
             let doc = await this.collection?.findOne({ historyId })
-            logger.info(`Found document associated with UAL: ${historyId}`)
+            logger.info(
+                `Found document associated with historyId: ${historyId}`
+            )
             return doc
         } catch (error) {
             logger.error(error)
