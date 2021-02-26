@@ -1,7 +1,28 @@
 import { FunctionComponent } from 'react'
 import classNames from 'classnames'
+import { MapContainer, TileLayer, Marker } from 'react-leaflet'
+import leaflet from 'leaflet'
+import './Map.css'
 
-export const Map: FunctionComponent = () => {
+interface Props {
+    markers: {
+        title: string
+        coordinates: {
+            latitude: number
+            longitude: number
+        }
+    }[]
+}
+
+export const Map: FunctionComponent<Props> = (props) => {
+    const icon = new leaflet.Icon({
+        iconUrl: '/map_marker.png',
+        iconSize: [48, 48],
+        iconAnchor: [22, 47],
+        popupAnchor: [0, -47],
+        tooltipAnchor: [0, -47]
+    })
+
     return (
         <div
             className={classNames(
@@ -13,14 +34,27 @@ export const Map: FunctionComponent = () => {
                 'mb-8'
             )}
         >
-            {/*eslint-disable-next-line jsx-a11y/alt-text*/}
-            <img
-                className="w-full object-fill"
-                src="https://www.vertical-leap.uk/wp-content/uploads/2017/11/map-1400x800.jpg"
-            />
-            <span className="select-none absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-black text-red-500">
-                THIS IS A PLACEHOLDER IMAGE
-            </span>
+            <MapContainer
+                className={'h-96'}
+                center={[0, 0]}
+                zoom={1}
+                attributionControl={false}
+            >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                {props.markers.map(
+                    (
+                        { title, coordinates: { latitude, longitude } },
+                        index
+                    ) => (
+                        <Marker
+                            position={[latitude, longitude]}
+                            title={title}
+                            icon={icon}
+                            key={index}
+                        />
+                    )
+                )}
+            </MapContainer>
         </div>
     )
 }

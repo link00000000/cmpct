@@ -7,6 +7,8 @@ interface Props {
     data: IClickHistoryEntry
 }
 
+const COORDINATE_PRECISION = 3
+
 export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
     const title = [data.city, data.state, data.country]
         .filter((x) => x !== undefined)
@@ -36,7 +38,15 @@ export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
                     label="Longitude / Latitude"
                     value={
                         data.coordinates &&
-                        `${data.coordinates.longitude} / ${data.coordinates.latitude}`
+                        `${parseFloat(
+                            data.coordinates.longitude.toFixed(
+                                COORDINATE_PRECISION
+                            )
+                        ).toString()} / ${parseFloat(
+                            data.coordinates.latitude.toFixed(
+                                COORDINATE_PRECISION
+                            )
+                        ).toString()}`
                     }
                 />
                 <TableEntry label="Provider" value={data.provider} />

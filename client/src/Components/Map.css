@@ -1,0 +1,15 @@
+@keyframes DropIn {
+    from {
+        opacity: 0;
+        top: -50px;
+    }
+    to {
+        opacity: 1;
+        top: 0;
+    }
+}
+
+.leaflet-marker-icon {
+    animation: 200ms DropIn forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}

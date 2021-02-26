@@ -53,7 +53,7 @@
         "dev": "run-s --silent dev:open-browser dev:databases dev:start",
         "dev:start": "run-p --print-label --print-name --race dev:server dev:client",
         "dev:open-browser": "open-cli http://localhost:8080",
-        "dev:server": "nodemon --watch index.ts --watch src --ext ts,json --exec cross-env NODE_ENV=development node -r ts-node/register index.ts",
+        "dev:server": "nodemon --watch index.ts --watch src --ext ts,json --exec cross-env NODE_ENV=development node -r ts-node/register --inspect index.ts",
         "dev:client": "cross-env BROWSER=none NODE_ENV=development yarn --cwd client start",
         "dev:databases": "run-s mongo:start redis:start",
         "lint:files": "prettier --write --ignore-unknown --ignore-path .gitignore",
