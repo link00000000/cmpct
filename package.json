@@ -56,6 +56,8 @@
         "dev:server": "nodemon --watch index.ts --watch src --ext ts,json --exec cross-env NODE_ENV=development node -r ts-node/register --inspect index.ts",
         "dev:client": "cross-env BROWSER=none NODE_ENV=development yarn --cwd client start",
         "dev:databases": "run-s mongo:start redis:start",
+        "dev:databases-down": "docker-compose down",
+        "dev:databases-clean": "docker volume rm cmpct_mongo-data cmpct_redis-data",
         "lint:files": "prettier --write --ignore-unknown --ignore-path .gitignore",
         "lint": "npm run lint:files .",
         "mongo:start": "docker-compose up -d mongo",
@@ -64,9 +66,7 @@
         "redis:attach": "docker-compose exec redis redis-cli",
         "heroku:deploy": "run-s heroku:dependencies build",
         "heroku:dependencies": "cd client && yarn",
-        "heroku-postbuild": "yarn heroku:deploy",
-        "down": "docker-compose down",
-        "db:reset": "docker volume rm cmpct_mongo-data cmpct_redis-data"
+        "heroku-postbuild": "yarn heroku:deploy"
     },
     "husky": {
         "hooks": {
