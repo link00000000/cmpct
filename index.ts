@@ -23,12 +23,6 @@ server.api.delete('/:shortUrlId', deleteRequestHandler(urlManager))
 // Start
 server.start(parseInt(process.env.PORT ?? String(8080)))
 
-// @FIXME Remove this later. Just to test some of the mongo api functions
-clickHistoryManager
-    .test()
-    .then((response) => logger.info(response))
-    .catch((error) => logger.error(error))
-
 // @FIXME This is test data that spams connected clients, should be
 // removed later
 //function randRange(min: number, max: number) {
