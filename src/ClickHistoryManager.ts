@@ -74,11 +74,10 @@ export class ClickHistoryManager {
     private async mongoSetup() {
         try {
             await this.mongoClient.connect()
-            this.collection = this.mongoClient
-                .db('cmpct')
-                .collection('analytics')
+            this.collection = this.mongoClient.db('cmpct').collection('history')
 
-            //@FIXME This will fix the spam function ensuring a document exists with the testId, remove later
+            //@FIXME This will fix the spam function ensuring a document exists
+            //with the testId, remove later
             await this.collection?.insertOne({
                 historyId: 'testId',
                 shortId: 'something',
@@ -104,9 +103,9 @@ export class ClickHistoryManager {
     }
 
     /**
-     * Update an entry in an existing document using the history id to search
-     * @param historyId Unique Analytic Link
-     * @param shortId Short ID
+     * Update an entry in an existing document
+     * @param historyId ID of history document
+     * @param shortId ID of short link
      * @param entry ClickHistoryEntry
      */
     async updateEntry(historyId: string, entry: ClickHistoryEntry) {
@@ -116,7 +115,7 @@ export class ClickHistoryManager {
 
         try {
             let doc = await this.collection?.findOne({ historyId })
-            if (!doc) throw new Error(`Document Not Found: ${historyId}`)
+            if (!doc) throw new Error(`Document not found: ${historyId}`)
 
             doc.clickHistory = [entry, ...doc.clickHistory]
             await this.collection?.updateOne(
@@ -128,13 +127,12 @@ export class ClickHistoryManager {
             throw error
         }
         this.socketConnections.publish(historyId, entry)
-        logger.info(
-            `Add new entry to click history of ${historyId}: ${entry.ip}`
-        )
+        logger.info(`New click entry on ${historyId}: ${entry.ip}`)
     }
 
     /**
-     * Create new ClickHistoryDocument with a unique historyId and insert it with the associated shortId
+     * Create new ClickHistoryDocument with a unique historyId and insert it
+     * with the associated shortId
      * @param shortId The Short URL that the clickers will use
      */
     async addDocument(shortId: string) {
@@ -150,7 +148,7 @@ export class ClickHistoryManager {
                 clickHistory: []
             })
             logger.info(
-                `Document was added to the analytics collection with the historyId: ${historyId} and Short URL: ${shortId}`
+                `History document created - historyId: ${historyId}, shortId: ${shortId}`
             )
         } catch (error) {
             throw error
@@ -158,7 +156,7 @@ export class ClickHistoryManager {
     }
 
     /**
-     * Remove a ClickHistoryDocument using the historyId
+     * Remove a ClickHistoryDocument
      * @param historyId Unique Analytic Link
      */
     async removeDocument(historyId: string) {
@@ -171,11 +169,11 @@ export class ClickHistoryManager {
         } catch (error) {
             throw error
         }
-        logger.info(`Document associated with historyId: ${historyId} removed`)
+        logger.info(`Document removed: ${historyId}`)
     }
 
     /**
-     * Fetch ClickHistoryDocument using the historyId for the search
+     * Fetch ClickHistoryDocument
      * @param historyId Unique Analytic Link
      */
     async getDocument(historyId: string) {
