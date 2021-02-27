@@ -1,20 +1,12 @@
 import redis from 'async-redis'
-import nanoid from 'nanoid'
 import type winston from 'winston'
+import { RandomId } from './Utils/RandomId'
 
 /**
  * Manager of shortened URLs. This class is responsible for interfacing
  * with Redis instead of interacting with databases directly
  */
 export class UrlManager {
-    private static shortUrlGeneratorAlphabet =
-        '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-    private static shortUrlGeneratorLength = 8
-    private static shortUrlGenerator = nanoid.customAlphabet(
-        UrlManager.shortUrlGeneratorAlphabet,
-        UrlManager.shortUrlGeneratorLength
-    )
-
     private redisClient
 
     constructor(private logger: winston.Logger) {
@@ -54,7 +46,7 @@ export class UrlManager {
         let shortUrlId: string
         let isUnique = false
         do {
-            shortUrlId = UrlManager.shortUrlGenerator()
+            shortUrlId = RandomId()
 
             try {
                 isUnique = !(await this.redisClient.exists(shortUrlId))
