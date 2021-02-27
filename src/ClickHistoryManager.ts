@@ -69,7 +69,7 @@ export class ClickHistoryManager {
     }
 
     /**
-     *  Connect to the mongo database and initialize the collection
+     *  Connect to the mongo database and initialize the analytic collection
      */
     private async mongoSetup() {
         try {
@@ -77,8 +77,14 @@ export class ClickHistoryManager {
             this.collection = this.mongoClient
                 .db('cmpct')
                 .collection('analytics')
+
+            //@FIXME This will fix the spam function ensuring a document exists with the testId, remove later
+            await this.collection?.insertOne({
+                historyId: 'testId',
+                shortId: 'something',
+                clickHistory: []
+            })
         } catch (error) {
-            logger.error(error)
             throw error
         }
 
@@ -119,7 +125,6 @@ export class ClickHistoryManager {
                 { upsert: true }
             )
         } catch (error) {
-            logger.error(error)
             throw error
         }
         this.socketConnections.publish(historyId, entry)
@@ -129,7 +134,7 @@ export class ClickHistoryManager {
     }
 
     /**
-     * Create new ClickHistoryDocument and insert it into the collection
+     * Create new ClickHistoryDocument with a unique historyId and insert it with the associated shortId
      * @param shortId The Short URL that the clickers will use
      */
     async addDocument(shortId: string) {
@@ -148,13 +153,12 @@ export class ClickHistoryManager {
                 `Document was added to the analytics collection with the historyId: ${historyId} and Short URL: ${shortId}`
             )
         } catch (error) {
-            logger.error(error)
             throw error
         }
     }
 
     /**
-     * Remove ClickHistoryDocument from the collection
+     * Remove a ClickHistoryDocument using the historyId
      * @param historyId Unique Analytic Link
      */
     async removeDocument(historyId: string) {
@@ -165,14 +169,13 @@ export class ClickHistoryManager {
         try {
             await this.collection?.deleteOne({ historyId })
         } catch (error) {
-            logger.error(error)
             throw error
         }
         logger.info(`Document associated with historyId: ${historyId} removed`)
     }
 
     /**
-     * Fetch ClickHistoryDocument from the collection
+     * Fetch ClickHistoryDocument using the historyId for the search
      * @param historyId Unique Analytic Link
      */
     async getDocument(historyId: string) {
@@ -187,7 +190,6 @@ export class ClickHistoryManager {
             )
             return doc
         } catch (error) {
-            logger.error(error)
             throw error
         }
     }
