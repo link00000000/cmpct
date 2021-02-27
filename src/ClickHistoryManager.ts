@@ -169,14 +169,8 @@ export class ClickHistoryManager {
             await this.mongoSetup()
         }
 
-        try {
-            let doc = await this.collection?.findOne({ historyId })
-            logger.info(
-                `Found document associated with historyId: ${historyId}`
-            )
-            return doc
-        } catch (error) {
-            throw error
-        }
+        let doc = await this.collection?.findOne({ historyId })
+        logger.info(`Found document associated with historyId: ${historyId}`)
+        return doc
     }
 }
