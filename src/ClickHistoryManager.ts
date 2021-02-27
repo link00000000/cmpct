@@ -95,12 +95,12 @@ export class ClickHistoryManager {
     }
 
     /**
-     * Update an entry in an existing document
+     * Append click an existing document
      * @param historyId ID of history document
      * @param shortId ID of short link
      * @param entry ClickHistoryEntry
      */
-    async updateEntry(historyId: string, entry: ClickHistoryEntry) {
+    async addClick(historyId: string, entry: ClickHistoryEntry) {
         if (!this.mongoClient.isConnected()) {
             await this.mongoSetup()
         }
@@ -149,7 +149,7 @@ export class ClickHistoryManager {
 
     /**
      * Remove a ClickHistoryDocument
-     * @param historyId Unique Analytic Link
+     * @param historyId ID of history document
      */
     async removeDocument(historyId: string) {
         if (!this.mongoClient.isConnected()) {
@@ -166,7 +166,7 @@ export class ClickHistoryManager {
 
     /**
      * Fetch ClickHistoryDocument
-     * @param historyId Unique Analytic Link
+     * @param historyId ID of history document
      */
     async getDocument(historyId: string) {
         if (!this.mongoClient.isConnected()) {
