@@ -156,11 +156,7 @@ export class ClickHistoryManager {
             await this.mongoSetup()
         }
 
-        try {
-            await this.collection?.deleteOne({ historyId })
-        } catch (error) {
-            throw error
-        }
+        await this.collection?.deleteOne({ historyId })
         logger.info(`Document removed: ${historyId}`)
     }
 
