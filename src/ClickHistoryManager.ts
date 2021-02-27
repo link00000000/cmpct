@@ -41,76 +41,52 @@ export type ClickHistory = ClickHistoryEntry[]
  * interactions with MongoDB instead of interacting with databases directly
  */
 export class ClickHistoryManager {
-    private mongoClient
+    private static MONGO_OPTIONS = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }
+    private static DEFAULT_MONGO_URL = 'mongodb://localhost:27017/cmpct'
+    private mongoClient = new MongoClient(
+        process.env.MONGO_URL ?? ClickHistoryManager.DEFAULT_MONGO_URL,
+        ClickHistoryManager.MONGO_OPTIONS
+    )
     private collection?: Collection<ClickHistoryDocument>
 
     constructor(private socketConnections: HistorySocket) {
-        if (process.env.MONGO_URL) {
-            this.mongoClient = new MongoClient(process.env.MONGO_URL, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            })
-        } else {
-            this.mongoClient = new MongoClient(
-                'mongodb://localhost:27017/cmpct',
-                { useNewUrlParser: true, useUnifiedTopology: true }
-            )
-        }
-
         this.mongoClient.on('error', this.mongoErrorHandler)
     }
 
+    /**
+     * Create a unique history document id
+     */
     private async createHistoryId() {
-        let isUnique = false
         let historyId = ''
-        do {
+        while (true) {
             historyId = RandomId.generateId()
-            if (!(await this.collection?.findOne({ historyId })))
-                isUnique = true
-        } while (!isUnique)
-        return historyId
+            const result = await this.collection?.findOne({ historyId })
+            if (!result) return historyId
+        }
     }
 
+    /**
+     *  Connect to the mongo database and initialize the collection
+     */
     private async mongoSetup() {
         try {
             await this.mongoClient.connect()
-            await this.mongoClient.db('cmpct').command({ ping: 1 })
             this.collection = this.mongoClient
                 .db('cmpct')
                 .collection('analytics')
         } catch (error) {
             logger.error(error)
+            throw error
         }
 
-        logger.info('Mongo Connection Successful')
+        logger.info('Mongo connection successful')
     }
 
     /**
-     * test the functions of the mongo api
-     * @TODO Remove this when it is no longer useful
-     */
-    public async test() {
-        try {
-            await this.addDocument('shrt')
-            let doc = await this.collection?.findOne({ shortId: 'shrt' })
-
-            if (!doc) throw Error(`Document not found`)
-            logger.info(JSON.stringify(doc))
-
-            await this.updateEntry(doc.historyId, 'shrt', {
-                time: 1,
-                ip: 'test'
-            })
-            logger.info(JSON.stringify(await this.getDocument(doc.historyId)))
-
-            await this.removeDocument(doc.historyId)
-        } catch (error) {
-            logger.error(error)
-        }
-    }
-
-    /**
-     * Handle mongo errors
+     * Log MongoDB errors
      * @param error Error
      */
     private mongoErrorHandler = (error: Error | string) => {
@@ -124,14 +100,10 @@ export class ClickHistoryManager {
     /**
      * Update an entry in an existing document using the history id to search
      * @param historyId Unique Analytic Link
-     * @param shortId Short URL
-     * @param entry New Click
+     * @param shortId Short ID
+     * @param entry ClickHistoryEntry
      */
-    async updateEntry(
-        historyId: string,
-        shortId: string,
-        entry: ClickHistoryEntry
-    ) {
+    async updateEntry(historyId: string, entry: ClickHistoryEntry) {
         if (!this.mongoClient.isConnected()) {
             await this.mongoSetup()
         }
@@ -148,13 +120,16 @@ export class ClickHistoryManager {
             )
         } catch (error) {
             logger.error(error)
+            throw error
         }
-        this.socketConnections.publish(shortId, entry)
-        logger.info(`Add new entry to click history of ${shortId}: ${entry.ip}`)
+        this.socketConnections.publish(historyId, entry)
+        logger.info(
+            `Add new entry to click history of ${historyId}: ${entry.ip}`
+        )
     }
 
     /**
-     * Add a new document
+     * Create new ClickHistoryDocument and insert it into the collection
      * @param shortId The Short URL that the clickers will use
      */
     async addDocument(shortId: string) {
@@ -174,11 +149,12 @@ export class ClickHistoryManager {
             )
         } catch (error) {
             logger.error(error)
+            throw error
         }
     }
 
     /**
-     * remove a document
+     * Remove ClickHistoryDocument from the collection
      * @param historyId Unique Analytic Link
      */
     async removeDocument(historyId: string) {
@@ -190,12 +166,13 @@ export class ClickHistoryManager {
             await this.collection?.deleteOne({ historyId })
         } catch (error) {
             logger.error(error)
+            throw error
         }
         logger.info(`Document associated with historyId: ${historyId} removed`)
     }
 
     /**
-     * Retrieve document
+     * Fetch ClickHistoryDocument from the collection
      * @param historyId Unique Analytic Link
      */
     async getDocument(historyId: string) {
@@ -211,6 +188,7 @@ export class ClickHistoryManager {
             return doc
         } catch (error) {
             logger.error(error)
+            throw error
         }
     }
 }

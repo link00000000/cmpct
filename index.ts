@@ -25,22 +25,22 @@ server.start(parseInt(process.env.PORT ?? String(8080)))
 
 // @FIXME This is test data that spams connected clients, should be
 // removed later
-//function randRange(min: number, max: number) {
-//    return Math.random() * (max - min) + min
-//}
-//
-//setInterval(() => {
-//    clickHistoryManager.updateEntry('testId', {
-//        ip: '127.0.0.1',
-//        time: new Date().getTime(),
-//        browser: 'None',
-//        city: 'Akron',
-//        country: 'United States',
-//        state: 'Ohio',
-//        os: 'Windows 10',
-//        coordinates: {
-//            longitude: randRange(-180, 180),
-//            latitude: randRange(-90, 90)
-//        }
-//    })
-//}, 1000)
+function randRange(min: number, max: number) {
+    return Math.random() * (max - min) + min
+}
+
+setInterval(() => {
+    clickHistoryManager.updateEntry('testId', {
+        ip: '127.0.0.1',
+        time: new Date().getTime(),
+        browser: 'None',
+        city: 'Akron',
+        country: 'United States',
+        state: 'Ohio',
+        os: 'Windows 10',
+        coordinates: {
+            longitude: randRange(-180, 180),
+            latitude: randRange(-90, 90)
+        }
+    })
+}, 1000)
