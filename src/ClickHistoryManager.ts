@@ -138,6 +138,8 @@ export class ClickHistoryManager {
         logger.info(
             `History document created - historyId: ${historyId}, shortId: ${shortId}`
         )
+
+        return historyId
     }
 
     /**
