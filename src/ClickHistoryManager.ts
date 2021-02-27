@@ -95,7 +95,7 @@ export class ClickHistoryManager {
     }
 
     /**
-     * Append click an existing document
+     * Append click to an existing document and publish change on PubSub channel
      * @param historyId ID of history document
      * @param shortId ID of short link
      * @param entry ClickHistoryEntry
@@ -105,19 +105,16 @@ export class ClickHistoryManager {
             await this.mongoSetup()
         }
 
-        try {
-            let doc = await this.collection?.findOne({ historyId })
-            if (!doc) throw new Error(`Document not found: ${historyId}`)
+        let doc = await this.collection?.findOne({ historyId })
+        if (!doc) throw new Error(`Document not found: ${historyId}`)
 
-            doc.clickHistory = [entry, ...doc.clickHistory]
-            await this.collection?.updateOne(
-                { historyId },
-                { $set: { doc } },
-                { upsert: true }
-            )
-        } catch (error) {
-            throw error
-        }
+        doc.clickHistory = [entry, ...doc.clickHistory]
+        await this.collection?.updateOne(
+            { historyId },
+            { $set: { doc } },
+            { upsert: true }
+        )
+
         this.socketConnections.publish(historyId, entry)
         logger.info(`New click entry on ${historyId}: ${entry.ip}`)
     }
