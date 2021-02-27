@@ -75,14 +75,6 @@ export class ClickHistoryManager {
         try {
             await this.mongoClient.connect()
             this.collection = this.mongoClient.db('cmpct').collection('history')
-
-            //@FIXME This will fix the spam function ensuring a document exists
-            //with the testId, remove later
-            await this.collection?.insertOne({
-                historyId: 'testId',
-                shortId: 'something',
-                clickHistory: []
-            })
         } catch (error) {
             throw error
         }
