@@ -1,12 +1,7 @@
 import nanoid from 'nanoid'
 
-export class RandomId {
-    private static idAlphabet =
-        '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-    private static idLength = 6
+const CHARACTER_SET =
+    '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+const LENGTH = 6
 
-    public static generateId = nanoid.customAlphabet(
-        RandomId.idAlphabet,
-        RandomId.idLength
-    )
-}
+export const RandomId = nanoid.customAlphabet(CHARACTER_SET, LENGTH)

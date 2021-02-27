@@ -46,7 +46,7 @@ export class UrlManager {
         let shortUrlId: string
         let isUnique = false
         do {
-            shortUrlId = RandomId.generateId()
+            shortUrlId = RandomId()
 
             try {
                 isUnique = !(await this.redisClient.exists(shortUrlId))

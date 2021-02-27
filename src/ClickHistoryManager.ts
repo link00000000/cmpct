@@ -62,7 +62,7 @@ export class ClickHistoryManager {
     private async createHistoryId() {
         let historyId = ''
         while (true) {
-            historyId = RandomId.generateId()
+            historyId = RandomId()
             const result = await this.collection?.findOne({ historyId })
             if (!result) return historyId
         }
