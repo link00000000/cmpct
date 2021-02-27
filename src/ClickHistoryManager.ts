@@ -132,19 +132,15 @@ export class ClickHistoryManager {
             await this.mongoSetup()
         }
 
-        try {
-            const historyId = await this.createHistoryId()
-            await this.collection?.insertOne({
-                historyId,
-                shortId,
-                clickHistory: []
-            })
-            logger.info(
-                `History document created - historyId: ${historyId}, shortId: ${shortId}`
-            )
-        } catch (error) {
-            throw error
-        }
+        const historyId = await this.createHistoryId()
+        await this.collection?.insertOne({
+            historyId,
+            shortId,
+            clickHistory: []
+        })
+        logger.info(
+            `History document created - historyId: ${historyId}, shortId: ${shortId}`
+        )
     }
 
     /**
