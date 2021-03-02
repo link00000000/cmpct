@@ -58,10 +58,7 @@ export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
                     }
                 />
                 <TableEntry label="Browser" value={data.browser} />
-                <TableEntry
-                    label="System Volume"
-                    value={data.volume?.toString()}
-                />
+                <TableEntry label="System Language" value={data.language} />
                 <TableEntry label="Operating System" value={data.os} />
                 <TableEntry
                     label="Time Zone"

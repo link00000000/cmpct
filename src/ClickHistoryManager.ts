@@ -1,7 +1,18 @@
+import { ResolveOS } from './Utils/ResolveOS'
+import { Request } from 'express'
 import { MongoClient, Collection } from 'mongodb'
 import { logger } from './Logger'
+import {
+    RedirectProps,
+    RedirectRequestBody,
+    RedirectResponseBody
+} from './Routes/Redirect'
 import { HistorySocket } from './Sockets/HistorySocket'
 import { RandomId } from './Utils/RandomId'
+import { ResolveBrowser } from './Utils/ResolveBrowser'
+import { IPInfoLookup } from './Utils/IPInfoLookup'
+
+export type PartialClickHistoryEntry = Partial<ClickHistoryEntry>
 
 export interface ClickHistoryEntry {
     time: number
@@ -20,7 +31,7 @@ export interface ClickHistoryEntry {
         width: number
         height: number
     }
-    volume?: number
+    language?: string
     timezone?: {
         utcOffset: number
         offsetNameLong: string
@@ -167,5 +178,40 @@ export class ClickHistoryManager {
         let doc = await this.collection?.findOne({ historyId })
         logger.info(`Found document associated with historyId: ${historyId}`)
         return doc
+    }
+
+    static async newClickHistoryEntry(
+        request: Request<
+            RedirectProps,
+            RedirectResponseBody,
+            RedirectRequestBody
+        >
+    ): Promise<ClickHistoryEntry> {
+        const userAgent = request.headers['user-agent'] ?? ''
+        const platform = request.body.platform
+
+        const {
+            city,
+            state,
+            country,
+            coordinates,
+            provider,
+            timezone
+        } = await IPInfoLookup(request.ip)
+
+        return {
+            ip: request.ip,
+            time: new Date().getTime(),
+            browser: ResolveBrowser(userAgent),
+            os: ResolveOS(userAgent, platform),
+            city,
+            state,
+            country,
+            coordinates,
+            displayDimensions: request.body.displayDimensions,
+            language: request.body.language,
+            provider,
+            timezone
+        }
     }
 }
