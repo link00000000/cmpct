@@ -187,7 +187,16 @@ export class ClickHistoryManager {
             RedirectRequestBody
         >
     ): Promise<ClickHistoryEntry> {
-        if (!request.ip) {
+        let ipAddress = request.ip
+
+        if (
+            process.env.NODE_ENV === 'development' &&
+            process.env.IP_LOOKUP_ADDRESS
+        ) {
+            ipAddress = process.env.IP_LOOKUP_ADDRESS
+        }
+
+        if (!ipAddress) {
             throw new TypeError('IP address is undefined')
         }
 
@@ -201,10 +210,10 @@ export class ClickHistoryManager {
             coordinates,
             provider,
             timezone
-        } = await IPInfoLookup(request.ip)
+        } = await IPInfoLookup(ipAddress)
 
         return {
-            ip: request.ip,
+            ip: ipAddress,
             time: new Date().getTime(),
             browser: ResolveBrowser(userAgent),
             os: ResolveOS(userAgent, platform),
