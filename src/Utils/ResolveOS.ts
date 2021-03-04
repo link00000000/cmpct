@@ -18,7 +18,7 @@ export const ResolveOS = (
     navigatorPlatform: string
 ) => {
     for (const [platform, matchers] of Object.entries(platforms)) {
-        for (const matcher in matchers) {
+        for (const matcher of matchers) {
             const expression = new RegExp(matcher, 'i')
 
             if (
