@@ -1,4 +1,3 @@
-import { ResolveOS } from './Utils/ResolveOS'
 import { Request } from 'express'
 import { MongoClient, Collection } from 'mongodb'
 import { logger } from './Logger'
@@ -11,6 +10,7 @@ import { HistorySocket } from './Sockets/HistorySocket'
 import { RandomId } from './Utils/RandomId'
 import { ResolveBrowser } from './Utils/ResolveBrowser'
 import { IPInfoLookup } from './Utils/IPInfoLookup'
+import UAParser from 'ua-parser-js'
 
 export type PartialClickHistoryEntry = Partial<ClickHistoryEntry>
 
@@ -200,8 +200,9 @@ export class ClickHistoryManager {
             throw new TypeError('IP address is undefined')
         }
 
-        const userAgent = request.headers['user-agent'] ?? ''
-        const platform = request.body.platform
+        const userAgent = new UAParser(
+            request.headers['user-agent'] ?? ''
+        ).getResult()
 
         const {
             city,
@@ -212,11 +213,15 @@ export class ClickHistoryManager {
             timezone
         } = await IPInfoLookup(ipAddress)
 
+        const os =
+            (userAgent.os.name as string) +
+            (userAgent.os.version && ' ' + userAgent.os.version)
+
         return {
             ip: ipAddress,
             time: new Date().getTime(),
-            browser: ResolveBrowser(userAgent),
-            os: ResolveOS(userAgent, platform),
+            browser: ResolveBrowser('@TODO'),
+            os,
             city,
             state,
             country,
