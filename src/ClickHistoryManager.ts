@@ -187,6 +187,10 @@ export class ClickHistoryManager {
             RedirectRequestBody
         >
     ): Promise<ClickHistoryEntry> {
+        if (!request.ip) {
+            throw new TypeError('IP address is undefined')
+        }
+
         const userAgent = request.headers['user-agent'] ?? ''
         const platform = request.body.platform
 

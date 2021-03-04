@@ -1,6 +1,5 @@
 import { ResolveTimezone } from './ResolveTimerzone'
 import axios from 'axios'
-import { toEditorSettings } from 'typescript'
 
 interface IPInfoResponse {
     ip: string
@@ -12,15 +11,13 @@ interface IPInfoResponse {
     org: string
     postal: string
     timezone: string
+    bogon: boolean
 }
 
 const API_HOST = 'https://ipinfo.io'
 
 export const IPInfoLookup = async (ipAddress: string) => {
     const API_TOKEN = process.env.IPINFO_API_TOKEN
-
-    // @FIXME Remove after testing
-    ipAddress = '75.185.171.56'
 
     if (!API_TOKEN) {
         throw new Error(
@@ -32,7 +29,9 @@ export const IPInfoLookup = async (ipAddress: string) => {
         `${API_HOST}/${ipAddress}?token=${API_TOKEN}`
     )
 
-    console.log(response)
+    if (response.bogon) {
+        throw new TypeError('Bogon IP address')
+    }
 
     const coordinateStrings = response.loc ? response.loc.split(',') : undefined
     const coordinates =
