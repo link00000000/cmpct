@@ -1,4 +1,4 @@
-import { ResolveTimezone } from './ResolveTimerzone'
+import { ResolveTimezone } from './ResolveTimezone'
 import axios from 'axios'
 
 interface IPInfoResponse {
