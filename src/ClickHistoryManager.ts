@@ -179,6 +179,10 @@ export class ClickHistoryManager {
         return doc
     }
 
+    /**
+     * Get the history ID that corresponds to the short ID
+     * @param shortId ID of short URL
+     */
     async getHistoryId(shortId: string) {
         if (!this.mongoClient.isConnected()) {
             await this.mongoSetup()
@@ -188,6 +192,10 @@ export class ClickHistoryManager {
         return document?.historyId
     }
 
+    /**
+     * Create an instance of `ClickHistoryEntry` from an express request
+     * @param request HTTP request from express that contains a payload containing click information
+     */
     static async newClickHistoryEntry(
         request: Request<
             RedirectProps,
@@ -197,6 +205,9 @@ export class ClickHistoryManager {
     ): Promise<ClickHistoryEntry> {
         let ipAddress = request.ip
 
+        // If we are in development mode, we can use the environment variable
+        // `IP_LOOKUP_ADDRESS` to override the IP address used to fetch
+        // information. Useful for testing
         if (
             process.env.NODE_ENV === 'development' &&
             process.env.IP_LOOKUP_ADDRESS
@@ -221,12 +232,14 @@ export class ClickHistoryManager {
             timezone
         } = await IPInfoLookup(ipAddress)
 
+        // Parse OS from user agent
         const os =
             (userAgent.os.name as string) +
             (userAgent.os.version && ' ' + userAgent.os.version) +
             (userAgent.cpu.architecture &&
                 ' (' + userAgent.cpu.architecture + ')')
 
+        // Parse browser from user agent
         const browser =
             (userAgent.browser.name as string) +
             (userAgent.browser.version && ' ' + userAgent.browser.version) +
