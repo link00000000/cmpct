@@ -15,11 +15,12 @@ const COORDINATE_PRECISION = 3
 
 export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
     const formatUTCOffset = (offset: number) => {
+        console.log(offset)
         const isNegative = offset < 0
 
         const absOffset = Math.abs(offset)
         const minutes = String(Math.abs(absOffset % 1) * 60).padStart(2, '0')
-        const hours = String(Math.trunc(absOffset)).padStart(2, '0')
+        const hours = String(Math.trunc(absOffset / 60)).padStart(2, '0')
 
         return `UTC${isNegative ? '-' : '+'}${hours}:${minutes}`
     }
