@@ -35,17 +35,19 @@ export const redirectRequestHandler = (urlManager: UrlManager) => {
             }
 
             // @TODO: Save collected data to db
-            ClickHistoryManager.newClickHistoryEntry(req)
-                .then((click) => {
-                    console.log(JSON.stringify(click))
-                })
-                .catch((error) => {
-                    if (error instanceof Error) {
-                        logger.error(error.message)
-                    } else {
-                        logger.error(error)
-                    }
-                })
+            try {
+                console.log(
+                    JSON.stringify(
+                        await ClickHistoryManager.newClickHistoryEntry(req)
+                    )
+                )
+            } catch (error) {
+                if (error instanceof Error) {
+                    logger.error(error.message)
+                } else {
+                    logger.error(error)
+                }
+            }
 
             const targetUrl = await urlManager.getTargetUrl(
                 req.params.shortUrlId
