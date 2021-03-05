@@ -1,3 +1,4 @@
+import { ClickHistoryManager } from './../ClickHistoryManager'
 import type { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { UrlManager } from '../UrlManager'
@@ -15,17 +16,20 @@ export interface CreateRequestBody {
 export interface CreateResponse {
     error?: string
     data?: {
-        id: string
+        historyId: string
     }
 }
 
 /**
  * Create new short url
  */
-export const createRequestHandler = (urlManager: UrlManager) => {
+export const createRequestHandler = (
+    urlManager: UrlManager,
+    clickHistoryManager: ClickHistoryManager
+) => {
     return async (
         req: Request<{}, CreateResponse, CreateRequestBody>,
-        res: Response
+        res: Response<CreateResponse>
     ) => {
         // Verify that url was in request body
         if (req.body.url === undefined) {
@@ -35,9 +39,11 @@ export const createRequestHandler = (urlManager: UrlManager) => {
         }
 
         try {
-            const shortUrl = await urlManager.createShortUrl(req.body.url)
+            const shortId = await urlManager.createShortUrl(req.body.url)
+            const historyId = await clickHistoryManager.createDocument(shortId)
+
             return res.status(StatusCodes.OK).json({
-                data: { id: shortUrl }
+                data: { historyId }
             })
         } catch (error) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error })

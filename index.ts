@@ -17,8 +17,11 @@ const urlManager = new UrlManager(logger)
 const clickHistoryManager = new ClickHistoryManager(historySocket)
 
 // Initialize servers
-server.api.post('/', createRequestHandler(urlManager))
-server.api.put('/:shortUrlId', redirectRequestHandler(urlManager))
+server.api.post('/', createRequestHandler(urlManager, clickHistoryManager))
+server.api.put(
+    '/:shortUrlId',
+    redirectRequestHandler(urlManager, clickHistoryManager)
+)
 server.api.delete('/:shortUrlId', deleteRequestHandler(urlManager))
 
 // Start

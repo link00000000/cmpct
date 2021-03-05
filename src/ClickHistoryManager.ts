@@ -134,7 +134,7 @@ export class ClickHistoryManager {
      * with the associated shortId
      * @param shortId The Short URL that the clickers will use
      */
-    async addDocument(shortId: string) {
+    async createDocument(shortId: string) {
         if (!this.mongoClient.isConnected()) {
             await this.mongoSetup()
         }
@@ -177,6 +177,15 @@ export class ClickHistoryManager {
         let doc = await this.collection?.findOne({ historyId })
         logger.info(`Found document associated with historyId: ${historyId}`)
         return doc
+    }
+
+    async getHistoryId(shortId: string) {
+        if (!this.mongoClient.isConnected()) {
+            await this.mongoSetup()
+        }
+
+        let document = await this.collection?.findOne({ shortId })
+        return document?.historyId
     }
 
     static async newClickHistoryEntry(
