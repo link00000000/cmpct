@@ -22,6 +22,11 @@ export interface RedirectResponseBody {
     }
 }
 
+/**
+ * Save click information to database and redirect client to long URL
+ * @param urlManager Instance of UrlManager
+ * @param clickHistoryManager Instance of ClickHistoryManager
+ */
 export const redirectRequestHandler = (
     urlManager: UrlManager,
     clickHistoryManager: ClickHistoryManager
