@@ -2,6 +2,13 @@ import { FunctionComponent } from 'react'
 import { ClickHistoryEntry as IClickHistoryEntry } from '../../../src/ClickHistoryManager'
 import classNames from 'classnames'
 import { DateTime } from 'luxon'
+import {
+    countries as COUNTRY_LIST,
+    languagesAll as LANGUAGE_LIST,
+    Language,
+    Country
+} from 'countries-list'
+import { FlagIcon } from './FlagIcon'
 
 interface Props {
     data: IClickHistoryEntry
@@ -10,10 +17,6 @@ interface Props {
 const COORDINATE_PRECISION = 3
 
 export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
-    const title = [data.city, data.state, data.country]
-        .filter((x) => x !== undefined)
-        .join(', ')
-
     const formatUTCOffset = (offset: number) => {
         const isNegative = offset < 0
 
@@ -24,20 +27,53 @@ export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
         return `UTC${isNegative ? '-' : '+'}${hours}:${minutes}`
     }
 
+    /**
+     * Convert ISO standardized language codes to a human readable format
+     *
+     * Code must be in format of <language code>-<country code>
+     * ex. en-US
+     *
+     * See:
+     * - ISO 3116-1 alpha-2: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+     * - ISO 639-2: https://en.wikipedia.org/wiki/ISO_639-2
+     *
+     * @param code ISO language localization code specified by ISO 3116-1 alpha-2 and ISO 639-2
+     */
+    const formatLanguageCode = (code: string) => {
+        return LANGUAGE_LIST[code.toLowerCase() as keyof typeof LANGUAGE_LIST]
+            ?.name
+    }
+
+    const formatCountryCode = (code: string) => {
+        return COUNTRY_LIST[code.toUpperCase() as keyof typeof COUNTRY_LIST]
+            ?.name
+    }
+
+    const title = [
+        data.city,
+        data.state,
+        data.country && formatCountryCode(data.country)
+    ]
+        .filter((x) => x !== undefined)
+        .join(', ')
+
     return (
         <div>
             <h2 className="text-lg">
-                <span className="font-black uppercase">{title}</span>
+                <span className="font-black uppercase">
+                    {data.country && (
+                        <FlagIcon code={data.country?.toLowerCase()} />
+                    )}{' '}
+                    {title}
+                </span>
                 <span className="md:float-right block">
                     {DateTime.fromMillis(data.time).toFormat('DD @ t')}
                 </span>
             </h2>
             <ul className="grid md:grid-cols-2 gap-x-4 mt-4">
-                <TableEntry label="IP" value={data.ip} />
-                <TableEntry
-                    label="Longitude / Latitude"
-                    value={
-                        data.coordinates &&
+                <TableEntry label="IP">{data.ip}</TableEntry>
+                <TableEntry label="Longitude / Latitude">
+                    {data.coordinates &&
                         `${parseFloat(
                             data.coordinates.longitude.toFixed(
                                 COORDINATE_PRECISION
@@ -46,29 +82,25 @@ export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
                             data.coordinates.latitude.toFixed(
                                 COORDINATE_PRECISION
                             )
-                        ).toString()}`
-                    }
-                />
-                <TableEntry label="Provider" value={data.provider} />
-                <TableEntry
-                    label="Display Dimensions"
-                    value={
-                        data.displayDimensions &&
-                        `${data.displayDimensions.width}x${data.displayDimensions.height}`
-                    }
-                />
-                <TableEntry label="Browser" value={data.browser} />
-                <TableEntry label="System Language" value={data.language} />
-                <TableEntry label="Operating System" value={data.os} />
-                <TableEntry
-                    label="Time Zone"
-                    value={
-                        data.timezone &&
+                        ).toString()}`}
+                </TableEntry>
+                <TableEntry label="Provider">{data.provider}</TableEntry>
+                <TableEntry label="Display Dimensions">
+                    {data.displayDimensions &&
+                        `${data.displayDimensions.width}x${data.displayDimensions.height}`}
+                </TableEntry>
+                <TableEntry label="Browser">{data.browser}</TableEntry>
+                <TableEntry label="System Language">
+                    {data.language &&
+                        formatLanguageCode(data.language.split('-')[0])}
+                </TableEntry>
+                <TableEntry label="Operating System">{data.os}</TableEntry>
+                <TableEntry label="Time Zone">
+                    {data.timezone &&
                         `${data.timezone.offsetNameShort} (${formatUTCOffset(
                             data.timezone.utcOffset
-                        )})`
-                    }
-                />
+                        )})`}
+                </TableEntry>
             </ul>
             <hr className="my-8"></hr>
         </div>
@@ -77,21 +109,18 @@ export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
 
 interface ITableEntry {
     label: string
-    value?: string
 }
 
-const TableEntry: FunctionComponent<ITableEntry> = ({ label, value }) => {
+const TableEntry: FunctionComponent<ITableEntry> = ({ label, children }) => {
     return (
         <li>
             <span className="font-bold">{label}</span>
-            <span
-                className={classNames(
-                    value === undefined && 'italic',
-                    'float-right'
-                )}
-            >
-                {value !== undefined ? value : 'unknown'}
-            </span>
+
+            {children ? (
+                <span className={'float-right'}>{children}</span>
+            ) : (
+                <span className={'float-right italic'}>unknown</span>
+            )}
         </li>
     )
 }
