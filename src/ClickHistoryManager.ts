@@ -214,11 +214,14 @@ export class ClickHistoryManager {
 
         const os =
             (userAgent.os.name as string) +
-            (userAgent.os.version && ' ' + userAgent.os.version)
+            (userAgent.os.version && ' ' + userAgent.os.version) +
+            (userAgent.cpu.architecture &&
+                ' (' + userAgent.cpu.architecture + ')')
 
         const browser =
             (userAgent.browser.name as string) +
-            (userAgent.browser.version && ' ' + userAgent.browser.version)
+            (userAgent.browser.version && ' ' + userAgent.browser.version) +
+            (userAgent.engine.name && ' (' + userAgent.engine.name + ')')
 
         return {
             ip: ipAddress,
