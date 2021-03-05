@@ -1,6 +1,9 @@
 import { ResolveTimezone } from './ResolveTimezone'
 import axios from 'axios'
 
+/**
+ * Response from ipinfo.io
+ */
 interface IPInfoResponse {
     ip: string
     hostname: string
@@ -16,6 +19,10 @@ interface IPInfoResponse {
 
 const API_HOST = 'https://ipinfo.io'
 
+/**
+ * Fetch information about an IP address from https://ipinfo.io
+ * @param ipAddress IP address to lookup
+ */
 export const IPInfoLookup = async (ipAddress: string) => {
     const API_TOKEN = process.env.IPINFO_API_TOKEN
 
@@ -29,10 +36,13 @@ export const IPInfoLookup = async (ipAddress: string) => {
         `${API_HOST}/${ipAddress}?token=${API_TOKEN}`
     )
 
+    // A bogon IP address is one that is likely bogus. This might trigger if you
+    // lookup using a local IP address like 127.0.0.1 or ::1
     if (response.bogon) {
         throw new TypeError('Bogon IP address')
     }
 
+    // Parse longitude and latitude coordinates
     const coordinateStrings = response.loc ? response.loc.split(',') : undefined
     const coordinates =
         coordinateStrings && coordinateStrings.length == 2
@@ -42,6 +52,7 @@ export const IPInfoLookup = async (ipAddress: string) => {
               }
             : undefined
 
+    // Parse internet service provider's name
     const provider = response.org?.match(/^[^ ]* (.*)$/)
 
     return {
