@@ -8,7 +8,6 @@ import {
 } from './Routes/Redirect'
 import { HistorySocket } from './Sockets/HistorySocket'
 import { RandomId } from './Utils/RandomId'
-import { ResolveBrowser } from './Utils/ResolveBrowser'
 import { IPInfoLookup } from './Utils/IPInfoLookup'
 import UAParser from 'ua-parser-js'
 
@@ -217,10 +216,14 @@ export class ClickHistoryManager {
             (userAgent.os.name as string) +
             (userAgent.os.version && ' ' + userAgent.os.version)
 
+        const browser =
+            (userAgent.browser.name as string) +
+            (userAgent.browser.version && ' ' + userAgent.browser.version)
+
         return {
             ip: ipAddress,
             time: new Date().getTime(),
-            browser: ResolveBrowser('@TODO'),
+            browser,
             os,
             city,
             state,
