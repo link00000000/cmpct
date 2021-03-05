@@ -21,7 +21,9 @@ export interface CreateResponse {
 }
 
 /**
- * Create new short url
+ * Create new short URL
+ * @param urlManager Instance of UrlManager
+ * @param clickHistoryManager Instance of ClickHistoryManager
  */
 export const createRequestHandler = (
     urlManager: UrlManager,
