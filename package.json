@@ -20,6 +20,7 @@
         "cross-env": "^7.0.3",
         "husky": "4",
         "lint-staged": ">=10",
+        "ngrok": "^3.4.0",
         "nodemon": "^2.0.7",
         "npm-run-all": "^4.1.5",
         "open-cli": "^6.0.1",
@@ -69,7 +70,8 @@
         "redis:attach": "docker-compose exec redis redis-cli",
         "heroku:deploy": "run-s heroku:dependencies build",
         "heroku:dependencies": "cd client && yarn",
-        "heroku-postbuild": "yarn heroku:deploy"
+        "heroku-postbuild": "yarn heroku:deploy",
+        "ngrok": "ngrok start --all --config ./ngrok.yml"
     },
     "husky": {
         "hooks": {

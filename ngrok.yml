@@ -1,0 +1,4 @@
+tunnels:
+    cmpct:
+        addr: 8080
+        proto: http
