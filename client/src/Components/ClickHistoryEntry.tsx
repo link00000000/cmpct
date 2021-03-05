@@ -1,12 +1,9 @@
 import { FunctionComponent } from 'react'
 import { ClickHistoryEntry as IClickHistoryEntry } from '../../../src/ClickHistoryManager'
-import classNames from 'classnames'
 import { DateTime } from 'luxon'
 import {
     countries as COUNTRY_LIST,
-    languagesAll as LANGUAGE_LIST,
-    Language,
-    Country
+    languagesAll as LANGUAGE_LIST
 } from 'countries-list'
 import { FlagIcon } from './FlagIcon'
 
