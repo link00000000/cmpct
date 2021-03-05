@@ -47,7 +47,7 @@ export const Map: FunctionComponent<Props> = (props) => {
                         index
                     ) => (
                         <Marker
-                            position={[latitude, longitude]}
+                            position={[longitude, latitude]}
                             title={title}
                             icon={icon}
                             key={index}
