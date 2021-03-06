@@ -48,7 +48,9 @@ export const History: FunctionComponent<Props> = (props) => {
             .post<HistoryResponseBody>('/api/history', historyApiRequestBody)
             .then((response) => {
                 if (response.data.error || !response.data.data) {
-                    // @TODO Handle error
+                    // If there was an error loading information about the link,
+                    // redirect client back to home page
+                    history.replace('/')
                     return
                 }
 
@@ -56,7 +58,7 @@ export const History: FunctionComponent<Props> = (props) => {
             })
             .catch((error) => {
                 // @TODO Handle error
-                console.error(error)
+                history.replace('/')
             })
     }, [])
 
