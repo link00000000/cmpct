@@ -57,7 +57,6 @@ export const History: FunctionComponent<Props> = (props) => {
                 setShortId(response.data.data.shortId)
             })
             .catch((error) => {
-                // @TODO Handle error
                 history.replace('/')
             })
     }, [])
