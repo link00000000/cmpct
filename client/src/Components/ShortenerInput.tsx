@@ -4,26 +4,23 @@ import { TextInput } from './TextInput'
 import axios from 'axios'
 import { CreateResponse } from '../../../src/Routes/Create'
 import { Notification, NotificationType } from './Notification'
+import { useHistory } from 'react-router-dom'
 
 export const ShortenerInput: FunctionComponent = () => {
     const [input, setInput] = useState<string>('')
-    const [shortLink, setShortLink] = useState<string | null>(null)
     const [errorNotification, setErrorNotification] = useState<Error | null>(
         null
     )
 
-    console.log('Loaded shortener input')
+    const history = useHistory()
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setInput(event.target.value)
     }
 
     const handleSubmit = async () => {
-        console.log('SUBMIT')
         const urlRegExpMatcher = RegExp(/^https?:\/\/.+\..+/)
         const regExpResult = input?.match(urlRegExpMatcher)
-
-        console.log(regExpResult)
 
         if (!regExpResult || regExpResult.length === 0) {
             setErrorNotification(new Error('Input must be a valid URL'))
@@ -45,7 +42,7 @@ export const ShortenerInput: FunctionComponent = () => {
                 throw new Error('Server responded with empty response')
             }
 
-            setShortLink(window.location.origin + '/' + data.id)
+            history.push('/history/' + data.historyId)
         } catch (error) {
             setErrorNotification(error)
         }
@@ -62,23 +59,6 @@ export const ShortenerInput: FunctionComponent = () => {
             <Button color="bg-yellow-300" onClick={handleSubmit}>
                 cmpct it
             </Button>
-
-            <Notification
-                show={shortLink !== null}
-                onClose={() => {
-                    setShortLink(null)
-                }}
-            >
-                <span className="font-semibold">
-                    Your shortened link is{' '}
-                    <a
-                        className="font-bold underline hover:opacity-80"
-                        href={shortLink as string}
-                    >
-                        {shortLink}
-                    </a>
-                </span>
-            </Notification>
 
             <Notification
                 type={NotificationType.error}

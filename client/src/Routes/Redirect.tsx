@@ -1,6 +1,9 @@
 import { FunctionComponent, useEffect } from 'react'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
-import { RedirectResponseBody } from '../../../src/Routes/Redirect'
+import {
+    RedirectRequestBody,
+    RedirectResponseBody
+} from '../../../src/Routes/Redirect'
 import axios from 'axios'
 
 interface RouteInfo {
@@ -12,15 +15,32 @@ type Props = RouteComponentProps<RouteInfo>
 export const Redirect: FunctionComponent<Props> = (props) => {
     const history = useHistory()
 
+    const API_ENDPOINT = '/api/' + props.match.params.shortUrl
+
+    const collectedData: RedirectRequestBody = {
+        platform: window.navigator.platform,
+        displayDimensions: {
+            width: window.screen.width,
+            height: window.screen.height
+        },
+        language: window.navigator.language
+    }
+
     const handleError = (error: Error) => {
         console.log(error)
         history.replace('/')
     }
 
     useEffect(() => {
-        axios
-            .get<RedirectResponseBody>('/api/' + props.match.params.shortUrl)
-            .then(({ data: response }) => {
+        ;(async () => {
+            try {
+                const {
+                    data: response
+                } = await axios.put<RedirectResponseBody>(
+                    API_ENDPOINT,
+                    collectedData
+                )
+
                 if (response.error) {
                     return handleError(new Error(response.error))
                 }
@@ -32,10 +52,10 @@ export const Redirect: FunctionComponent<Props> = (props) => {
                 }
 
                 window.location.href = response.data.targetUrl
-            })
-            .catch((error) => {
+            } catch (error) {
                 handleError(error)
-            })
+            }
+        })()
     }, [])
 
     return <></>

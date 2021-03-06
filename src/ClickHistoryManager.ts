@@ -1,7 +1,17 @@
+import { Request } from 'express'
 import { MongoClient, Collection } from 'mongodb'
 import { logger } from './Logger'
+import {
+    RedirectProps,
+    RedirectRequestBody,
+    RedirectResponseBody
+} from './Routes/Redirect'
 import { HistorySocket } from './Sockets/HistorySocket'
 import { RandomId } from './Utils/RandomId'
+import { IPInfoLookup } from './Utils/IPInfoLookup'
+import UAParser from 'ua-parser-js'
+
+export type PartialClickHistoryEntry = Partial<ClickHistoryEntry>
 
 export interface ClickHistoryEntry {
     time: number
@@ -20,7 +30,7 @@ export interface ClickHistoryEntry {
         width: number
         height: number
     }
-    volume?: number
+    language?: string
     timezone?: {
         utcOffset: number
         offsetNameLong: string
@@ -124,7 +134,7 @@ export class ClickHistoryManager {
      * with the associated shortId
      * @param shortId The Short URL that the clickers will use
      */
-    async addDocument(shortId: string) {
+    async createDocument(shortId: string) {
         if (!this.mongoClient.isConnected()) {
             await this.mongoSetup()
         }
@@ -167,5 +177,87 @@ export class ClickHistoryManager {
         let doc = await this.collection?.findOne({ historyId })
         logger.info(`Found document associated with historyId: ${historyId}`)
         return doc
+    }
+
+    /**
+     * Get the history ID that corresponds to the short ID
+     * @param shortId ID of short URL
+     */
+    async getHistoryId(shortId: string) {
+        if (!this.mongoClient.isConnected()) {
+            await this.mongoSetup()
+        }
+
+        let document = await this.collection?.findOne({ shortId })
+        return document?.historyId
+    }
+
+    /**
+     * Create an instance of `ClickHistoryEntry` from an express request
+     * @param request HTTP request from express that contains a payload containing click information
+     */
+    static async newClickHistoryEntry(
+        request: Request<
+            RedirectProps,
+            RedirectResponseBody,
+            RedirectRequestBody
+        >
+    ): Promise<ClickHistoryEntry> {
+        let ipAddress = request.ip
+
+        // If we are in development mode, we can use the environment variable
+        // `IP_LOOKUP_ADDRESS` to override the IP address used to fetch
+        // information. Useful for testing
+        if (
+            process.env.NODE_ENV === 'development' &&
+            process.env.IP_LOOKUP_ADDRESS
+        ) {
+            ipAddress = process.env.IP_LOOKUP_ADDRESS
+        }
+
+        if (!ipAddress) {
+            throw new TypeError('IP address is undefined')
+        }
+
+        const userAgent = new UAParser(
+            request.headers['user-agent'] ?? ''
+        ).getResult()
+
+        const {
+            city,
+            state,
+            country,
+            coordinates,
+            provider,
+            timezone
+        } = await IPInfoLookup(ipAddress)
+
+        // Parse OS from user agent
+        const os =
+            (userAgent.os.name as string) +
+            (userAgent.os.version && ' ' + userAgent.os.version) +
+            (userAgent.cpu.architecture &&
+                ' (' + userAgent.cpu.architecture + ')')
+
+        // Parse browser from user agent
+        const browser =
+            (userAgent.browser.name as string) +
+            (userAgent.browser.version && ' ' + userAgent.browser.version) +
+            (userAgent.engine.name && ' (' + userAgent.engine.name + ')')
+
+        return {
+            ip: ipAddress,
+            time: new Date().getTime(),
+            browser,
+            os,
+            city,
+            state,
+            country,
+            coordinates,
+            displayDimensions: request.body.displayDimensions,
+            language: request.body.language,
+            provider,
+            timezone
+        }
     }
 }
