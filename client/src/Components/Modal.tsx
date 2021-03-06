@@ -62,8 +62,11 @@ export const Modal: FunctionComponent<Props> = ({
                     <h1 className="text-2xl uppercase font-black">{title}</h1>
                     <div className="pt-4 pb-8">{children}</div>
 
-                    <div className="flex justify-end">
-                        <Button color="bg-white mr-4" onClick={onCancel}>
+                    <div className="flex flex-col sm:flex-row sm:justify-end">
+                        <Button
+                            color="bg-white mb-4 sm:mb-0 sm:mr-4"
+                            onClick={onCancel}
+                        >
                             {cancelText}
                         </Button>
                         <Button color={confirmColor} onClick={onSubmit}>
