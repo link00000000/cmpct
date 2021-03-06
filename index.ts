@@ -24,7 +24,7 @@ server.api.put(
     redirectRequestHandler(urlManager, clickHistoryManager)
 )
 server.api.delete('/:shortUrlId', deleteRequestHandler(urlManager))
-server.api.get('/history', historyRequestHandler(clickHistoryManager))
+server.api.post('/history', historyRequestHandler(clickHistoryManager))
 
 // Start
 server.start(parseInt(process.env.PORT ?? String(8080)))
