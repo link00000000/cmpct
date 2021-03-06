@@ -6,6 +6,7 @@ import { UrlManager } from './src/UrlManager'
 import { logger } from './src/Logger'
 import { createRequestHandler } from './src/Routes/Create'
 import { deleteRequestHandler } from './src/Routes/Delete'
+import { historyRequestHandler } from './src/Routes/History'
 import 'dotenv/config'
 
 // Instantiate servers
@@ -23,6 +24,7 @@ server.api.put(
     redirectRequestHandler(urlManager, clickHistoryManager)
 )
 server.api.delete('/:shortUrlId', deleteRequestHandler(urlManager))
+server.api.post('/history', historyRequestHandler(clickHistoryManager))
 
 // Start
 server.start(parseInt(process.env.PORT ?? String(8080)))

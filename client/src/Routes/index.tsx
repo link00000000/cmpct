@@ -13,7 +13,7 @@ const Routes = (
     <BrowserRouter>
         <Switch>
             <Route path="/" exact component={Home} />
-            <Route path="/history/:channel" exact component={History} />
+            <Route path="/history/:historyId" exact component={History} />
             <Route path="/:shortUrl" exact component={Redirect} />
             <Route path="*" component={_404} />
         </Switch>
