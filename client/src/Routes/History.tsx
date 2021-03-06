@@ -16,9 +16,14 @@ import {
     HistorySocketPayload,
     HistorySocketResponse
 } from '../../../src/Sockets/HistorySocket'
+import axios from 'axios'
+import {
+    HistoryRequestBody,
+    HistoryResponseBody
+} from '../../../src/Routes/History'
 
 interface RouteInfo {
-    channel: string
+    historyId: string
 }
 
 type Props = RouteComponentProps<RouteInfo>
@@ -32,9 +37,30 @@ export const History: FunctionComponent<Props> = (props) => {
 
     // @TODO Fill initial array with fetched HTTP data
     const [clicks, setClicks] = useState<IClickHistory>([])
+    const [shortId, setShortId] = useState<string>('')
 
     useEffect(() => {
-        console.log('start')
+        const historyApiRequestBody: HistoryRequestBody = {
+            historyId: props.match.params.historyId
+        }
+
+        axios
+            .post<HistoryResponseBody>('/api/history', historyApiRequestBody)
+            .then((response) => {
+                if (response.data.error || !response.data.data) {
+                    // @TODO Handle error
+                    return
+                }
+
+                setShortId(response.data.data.shortId)
+            })
+            .catch((error) => {
+                // @TODO Handle error
+                console.error(error)
+            })
+    }, [])
+
+    useEffect(() => {
         socket.current = new WebSocket(
             `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
                 window.location.host
@@ -42,11 +68,9 @@ export const History: FunctionComponent<Props> = (props) => {
         )
 
         socket.current.onopen = () => {
-            console.log('socket opened')
-
             const handshake: HistorySocketPayload = {
                 action: 'subscribe',
-                channel: props.match.params.channel
+                channel: props.match.params.historyId
             }
             socket.current?.send(JSON.stringify(handshake))
         }
@@ -67,20 +91,14 @@ export const History: FunctionComponent<Props> = (props) => {
             }
         }
 
-        socket.current.onclose = () => {
-            console.log('socket closed')
-        }
-
-        socket.current.onerror = (e) => {
-            console.log(e)
+        socket.current.onerror = (error) => {
+            console.error(error)
         }
 
         return () => {
-            console.log('closing connection')
-
             const handshake: HistorySocketPayload = {
                 action: 'unsubscribe',
-                channel: props.match.params.channel
+                channel: props.match.params.historyId
             }
             socket.current?.send(JSON.stringify(handshake))
             socket.current?.close()
@@ -124,8 +142,14 @@ export const History: FunctionComponent<Props> = (props) => {
             />
 
             <TextCopy
-                display={'@TODO cmpct.tk/someUrl'}
-                value={'@TODO https://cmpct.tk/someUrl'}
+                display={window.location.host + '/' + shortId}
+                value={
+                    window.location.protocol +
+                    '//' +
+                    window.location.host +
+                    '/' +
+                    shortId
+                }
             />
 
             <ClickHistory clicks={clicks} />
