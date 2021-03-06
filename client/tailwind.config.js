@@ -8,6 +8,7 @@ module.exports = {
     purge: ['./src/**/*.tsx'],
     theme: {
         zIndex: {
+            999998: 999998,
             999999: 999999
         },
         boxShadow: {

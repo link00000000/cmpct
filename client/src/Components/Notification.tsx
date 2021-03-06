@@ -70,6 +70,7 @@ export const Notification: FunctionComponent<Props> = ({
                 'font-bold',
                 'text-lg',
                 'text-center',
+                'z-999998',
                 colors[type]
             )}
             style={{
