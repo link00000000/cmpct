@@ -35,7 +35,6 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const socket = useRef<WebSocket>()
 
-    // @TODO Fill initial array with fetched HTTP data
     const [clicks, setClicks] = useState<IClickHistory>([])
     const [shortId, setShortId] = useState<string>('')
 
@@ -55,8 +54,10 @@ export const History: FunctionComponent<Props> = (props) => {
                 }
 
                 setShortId(response.data.data.shortId)
+                setClicks(response.data.data.clickHistory)
             })
             .catch((error) => {
+                console.error(error)
                 history.replace('/')
             })
     }, [])
