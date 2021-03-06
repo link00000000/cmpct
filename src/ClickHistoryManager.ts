@@ -115,13 +115,15 @@ export class ClickHistoryManager {
             await this.mongoSetup()
         }
 
-        let doc = await this.collection?.findOne({ historyId })
-        if (!doc) throw new Error(`Document not found: ${historyId}`)
+        let historyDocument = await this.collection?.findOne({ historyId })
+        if (!historyDocument)
+            throw new Error(`Document not found: ${historyId}`)
 
-        doc.clickHistory = [entry, ...doc.clickHistory]
+        const newClickHistory = [entry, ...historyDocument.clickHistory]
+
         await this.collection?.updateOne(
             { historyId },
-            { $set: { doc } },
+            { $set: { clickHistory: newClickHistory } },
             { upsert: true }
         )
 
