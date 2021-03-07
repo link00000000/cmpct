@@ -51,7 +51,7 @@ export const Redirect: FunctionComponent<Props> = (props) => {
                     )
                 }
 
-                // window.location.href = response.data.targetUrl
+                window.location.href = response.data.targetUrl
             } catch (error) {
                 handleError(error)
             }

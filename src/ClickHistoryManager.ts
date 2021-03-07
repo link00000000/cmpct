@@ -207,12 +207,12 @@ export class ClickHistoryManager {
     ): Promise<ClickHistoryEntry> {
         let ipAddress: string
 
-        if (
-            request.headers &&
-            request.headers['x-forwarded-for'] &&
-            request.headers['x-forwarded-for'].length > 0
-        ) {
-            ipAddress = request.headers['x-forwarded-for'][0]
+        if (request.headers && request.headers['x-forwarded-for']) {
+            if (request.headers['x-forwarded-for'] instanceof Array) {
+                ipAddress = request.headers['x-forwarded-for'][0]
+            } else {
+                ipAddress = request.headers['x-forwarded-for']
+            }
         } else {
             ipAddress = request.ip
         }
