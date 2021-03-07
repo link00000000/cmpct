@@ -20,15 +20,9 @@ import {
 import axios from 'axios'
 import {
     HistoryRequestBody,
-    historyRequestHandler,
     HistoryResponseBody
 } from '../../../src/Routes/History'
-import {
-    DeleteResponseBody,
-    deleteRequestHandler
-} from '../../../src/Routes/Delete'
-import { response } from 'express'
-import { logger } from '../../../src/Logger'
+import { DeleteResponseBody } from '../../../src/Routes/Delete'
 
 interface RouteInfo {
     historyId: string
@@ -41,8 +35,7 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
-    const [showDeleteError, setShowDeleterError] = useState<boolean>(false)
-    const [deleteError, setDeleteError] = useState<string>('')
+    const [deleteError, setDeleteError] = useState<string | null>('hello')
 
     const socket = useRef<WebSocket>()
 
@@ -119,25 +112,26 @@ export const History: FunctionComponent<Props> = (props) => {
     }, [])
 
     const handleDeleteModalCancel = () => {
+        setDeleteError(null)
         setShowDeleteModal(false)
     }
 
     const handleDeleteModalConfirm = () => {
         setShowDeleteModal(false)
         axios
-            .delete<DeleteProps, DeleteResponseBody>(
-                `/api/${props.match.params.historyId}`
-            )
+            .delete<DeleteResponseBody>(`/api/${props.match.params.historyId}`)
             .then((response) => {
-                if (response.error) {
+                if (response.data.error) {
+                    setDeleteError(response.data.error)
                     return
                 }
                 history.push('/')
             })
             .catch((error) => {
-                setShowDeleterError(true)
-                setDeleteError(error.message)
-                console.error(error)
+                const errorMessage =
+                    error instanceof Error ? error.message : error.toString()
+                setDeleteError(errorMessage)
+                console.error(errorMessage)
             })
     }
 
@@ -201,12 +195,12 @@ export const History: FunctionComponent<Props> = (props) => {
 
             <Notification
                 type={NotificationType.error}
-                show={showDeleteError}
+                show={deleteError !== null}
                 onClose={() => {
-                    setShowDeleterError(false)
+                    setDeleteError(null)
                 }}
             >
-                Error: {deleteError}
+                There was an error deleting cmpct link. {deleteError}
             </Notification>
         </div>
     )
