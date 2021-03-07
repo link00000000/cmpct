@@ -175,7 +175,7 @@ export const History: FunctionComponent<Props> = (props) => {
                     }
                 />
 
-                <ClickHistory clicks={clicks} />
+                <ClickHistory clicks={clicks} loading={loading} />
 
                 <Button
                     color="bg-red-500"
