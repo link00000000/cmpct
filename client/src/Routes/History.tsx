@@ -42,7 +42,7 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
-    const [showDeleteError, setShowDeleterError] = useState<boolean>(false)
+    const [showDeleteError, setShowDeleteError] = useState<boolean>(false)
     const [deleteError, setDeleteError] = useState<string>('')
 
     const socket = useRef<WebSocket>()
@@ -137,7 +137,7 @@ export const History: FunctionComponent<Props> = (props) => {
                 history.push('/')
             })
             .catch((error) => {
-                setShowDeleterError(true)
+                setShowDeleteError(true)
                 setDeleteError(error.message)
                 console.error(error)
             })
@@ -205,7 +205,7 @@ export const History: FunctionComponent<Props> = (props) => {
                 type={NotificationType.error}
                 show={showDeleteError}
                 onClose={() => {
-                    setShowDeleterError(false)
+                    setShowDeleteError(false)
                 }}
             >
                 Error: {deleteError}
