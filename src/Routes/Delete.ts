@@ -1,16 +1,20 @@
 import { StatusCodes } from 'http-status-codes'
 import { Request, Response } from 'express'
 import { UrlManager } from './../UrlManager'
+import { ClickHistoryManager } from './../ClickHistoryManager'
 
 interface DeleteProps {
     shortUrlId: string
 }
 
-interface DeleteResponseBody {
+export interface DeleteResponseBody {
     error?: string
 }
 
-export const deleteRequestHandler = (urlManager: UrlManager) => {
+export const deleteRequestHandler = (
+    urlManager: UrlManager,
+    clickHistoryManager: ClickHistoryManager
+) => {
     return async (
         req: Request<DeleteProps, DeleteResponseBody>,
         res: Response
@@ -22,8 +26,15 @@ export const deleteRequestHandler = (urlManager: UrlManager) => {
             })
         }
 
+        const doc = await clickHistoryManager.getDocument(req.params.shortUrlId)
+        if (doc?.shortId === undefined) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                error: 'Document was not found'
+            })
+        }
+
         // Make sure that the key exists
-        const exists = await urlManager.exists(req.params.shortUrlId)
+        const exists = await urlManager.exists(doc.shortId)
         if (!exists) {
             return res.status(StatusCodes.NOT_FOUND).json({
                 error: 'Key does not exist'
@@ -32,7 +43,8 @@ export const deleteRequestHandler = (urlManager: UrlManager) => {
 
         // Remove url from database
         try {
-            await urlManager.deleteUrl(req.params.shortUrlId)
+            await urlManager.deleteUrl(doc.shortId)
+            await clickHistoryManager.removeDocument(doc.historyId)
             return res.status(StatusCodes.OK).send()
         } catch (error) {
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

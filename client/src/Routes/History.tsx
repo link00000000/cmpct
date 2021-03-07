@@ -3,6 +3,7 @@ import { ClickHistory } from '../Components/ClickHistory'
 import { Map } from '../Components/Map'
 import { TextCopy } from '../Components/TextCopy'
 import { Button } from '../Components/Button'
+import { Notification, NotificationType } from '../Components/Notification'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { Modal } from '../Components/Modal'
 import { useState } from 'react'
@@ -22,6 +23,7 @@ import {
     HistoryResponseBody
 } from '../../../src/Routes/History'
 import { Loader } from '../Components/Loader'
+import { DeleteResponseBody } from '../../../src/Routes/Delete'
 
 interface RouteInfo {
     historyId: string
@@ -33,6 +35,8 @@ export const History: FunctionComponent<Props> = (props) => {
     const history = useHistory()
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+
+    const [deleteError, setDeleteError] = useState<string | null>(null)
 
     const socket = useRef<WebSocket>()
 
@@ -111,14 +115,27 @@ export const History: FunctionComponent<Props> = (props) => {
     }, [])
 
     const handleDeleteModalCancel = () => {
+        setDeleteError(null)
         setShowDeleteModal(false)
     }
 
     const handleDeleteModalConfirm = () => {
         setShowDeleteModal(false)
-
-        // @TODO Handle delete with API
-        history.push('/')
+        axios
+            .delete<DeleteResponseBody>(`/api/${props.match.params.historyId}`)
+            .then((response) => {
+                if (response.data.error) {
+                    setDeleteError(response.data.error)
+                    return
+                }
+                history.push('/')
+            })
+            .catch((error) => {
+                const errorMessage =
+                    error instanceof Error ? error.message : error.toString()
+                setDeleteError(errorMessage)
+                console.error(errorMessage)
+            })
     }
 
     return (
@@ -180,6 +197,16 @@ export const History: FunctionComponent<Props> = (props) => {
                 Are you sure you want to delete this link? This action cannot be
                 undone!
             </Modal>
+
+            <Notification
+                type={NotificationType.error}
+                show={deleteError !== null}
+                onClose={() => {
+                    setDeleteError(null)
+                }}
+            >
+                There was an error deleting cmpct link. {deleteError}
+            </Notification>
         </div>
     )
 }
