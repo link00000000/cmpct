@@ -27,7 +27,7 @@ export const Redirect: FunctionComponent<Props> = (props) => {
     }
 
     const handleError = (error: Error) => {
-        console.log(error)
+        console.error(error)
         history.replace('/')
     }
 

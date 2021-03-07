@@ -92,7 +92,7 @@ export const History: FunctionComponent<Props> = (props) => {
                 setDeleteError(message)
                 console.error(message)
             } else if (payload.type === 'message') {
-                console.log(message)
+                console.info(message)
             } else if (payload.type === 'data') {
                 setClicks((clicks) => [
                     payload.data as IClickHistoryEntry,

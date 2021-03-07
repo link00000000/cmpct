@@ -16,7 +16,6 @@ const COORDINATE_PRECISION = 3
 export const ClickHistoryEntry = forwardRef<HTMLDivElement, Props>(
     ({ data }, ref) => {
         const formatUTCOffset = (offset: number) => {
-            console.log(offset)
             const isNegative = offset < 0
 
             const absOffset = Math.abs(offset)
