@@ -22,7 +22,7 @@ import {
     HistoryRequestBody,
     HistoryResponseBody
 } from '../../../src/Routes/History'
-import { DeleteProps, DeleteResponseBody } from '../../../src/Routes/Delete'
+import { DeleteResponseBody } from '../../../src/Routes/Delete'
 
 interface RouteInfo {
     historyId: string
@@ -119,11 +119,10 @@ export const History: FunctionComponent<Props> = (props) => {
     const handleDeleteModalConfirm = () => {
         setShowDeleteModal(false)
         axios
-            .delete<DeleteProps, DeleteResponseBody>(
-                `/api/${props.match.params.historyId}`
-            )
+            .delete<DeleteResponseBody>(`/api/${props.match.params.historyId}`)
             .then((response) => {
-                if (response.error) {
+                if (response.data.error) {
+                    setDeleteError(response.data.error)
                     return
                 }
                 history.push('/')
