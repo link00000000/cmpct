@@ -8,7 +8,7 @@ import {
 import { config } from 'dotenv/types'
 import axios from 'axios'
 
-export interface DeleteProps {
+interface DeleteProps {
     shortUrlId: string
 }
 

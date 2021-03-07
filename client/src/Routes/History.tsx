@@ -24,7 +24,6 @@ import {
     HistoryResponseBody
 } from '../../../src/Routes/History'
 import {
-    DeleteProps,
     DeleteResponseBody,
     deleteRequestHandler
 } from '../../../src/Routes/Delete'
@@ -125,7 +124,6 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const handleDeleteModalConfirm = () => {
         setShowDeleteModal(false)
-        // @TODO Handle delete with API
         axios
             .delete<DeleteProps, DeleteResponseBody>(
                 `/api/${props.match.params.historyId}`
