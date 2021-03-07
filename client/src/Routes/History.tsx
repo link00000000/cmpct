@@ -90,6 +90,9 @@ export const History: FunctionComponent<Props> = (props) => {
                     payload.data as IClickHistoryEntry,
                     ...clicks
                 ])
+            } else if (payload.type === 'heartbeat') {
+                console.log('Heartbeat')
+                socket.current?.send(JSON.stringify({ type: 'heartbeat' }))
             }
         }
 

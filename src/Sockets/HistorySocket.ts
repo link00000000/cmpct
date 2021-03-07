@@ -1,7 +1,8 @@
+import { SocketHeartbeat } from './SocketHeartbeat'
 import ws from 'ws'
 import { PubSub } from '../PubSub'
 import { logger } from '../Logger'
-import { ClickHistoryEntry, ClickHistoryManager } from '../ClickHistoryManager'
+import { ClickHistoryEntry } from '../ClickHistoryManager'
 
 /**
  * Incoming data to `HistorySocket`
@@ -42,15 +43,20 @@ export class HistorySocket {
 
     constructor(private wss: ws.Server) {
         wss.on('connection', (socket: ws) => {
+            const heartbeat = new SocketHeartbeat(socket, 5)
+            heartbeat.onHeartbeatStop = () => {
+                socket.close()
+                console.log('dead.')
+            }
+            heartbeat.startHeartbeat()
+
             logger.info('New connection to history socket')
 
             socket.on('message', (data) => {
                 // Parse payload from JSON string
-                let payload: HistorySocketPayload
+                let payload: { [key: string]: any }
                 try {
-                    payload = JSON.parse(
-                        data.toString()
-                    ) as HistorySocketPayload
+                    payload = JSON.parse(data.toString())
                 } catch (error) {
                     // Error parsing JSON string
                     logger.error(
@@ -65,6 +71,9 @@ export class HistorySocket {
 
                     return
                 }
+
+                // Ignore heartbeats
+                if (payload.type === 'heartbeat') return
 
                 const { action, channel } = payload
                 if (!action || !channel) {
