@@ -129,8 +129,10 @@ export const History: FunctionComponent<Props> = (props) => {
                 history.push('/')
             })
             .catch((error) => {
-                setDeleteError(error.message)
-                console.error(error)
+                const errorMessage =
+                    error instanceof Error ? error.message : error.toString()
+                setDeleteError(errorMessage)
+                console.error(errorMessage)
             })
     }
 
