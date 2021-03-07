@@ -2,6 +2,7 @@ import { FunctionComponent, useState } from 'react'
 import { TextInput } from './TextInput'
 import { Button } from './Button'
 import { Notification } from './Notification'
+import copy from 'copy-to-clipboard'
 
 interface Props {
     display?: string
@@ -17,7 +18,7 @@ export const TextCopy: FunctionComponent<Props> = ({
     const [showNotification, setShowNotification] = useState<boolean>(false)
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(value)
+        copy(value)
         setShowNotification(true)
     }
 
