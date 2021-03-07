@@ -1,3 +1,4 @@
+import { logger } from './../Logger'
 import { ResolveTimezone } from './ResolveTimezone'
 import axios from 'axios'
 
@@ -32,14 +33,15 @@ export const IPInfoLookup = async (ipAddress: string) => {
         )
     }
 
-    const { data: response } = await axios.get<IPInfoResponse>(
-        `${API_HOST}/${ipAddress}?token=${API_TOKEN}`
-    )
+    const URL = `${API_HOST}/${ipAddress}?token=${API_TOKEN}`
+    logger.info(`Fetching IP info for ${ipAddress} at ${URL}`)
+
+    const { data: response } = await axios.get<IPInfoResponse>(URL)
 
     // A bogon IP address is one that is likely bogus. This might trigger if you
     // lookup using a local IP address like 127.0.0.1 or ::1
     if (response.bogon) {
-        throw new TypeError('Bogon IP address')
+        throw new TypeError('Bogon IP address: ' + ipAddress)
     }
 
     // Parse longitude and latitude coordinates
