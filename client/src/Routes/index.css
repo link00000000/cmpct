@@ -1,0 +1,8 @@
+.router-switch {
+    position: relative;
+}
+
+.router-switch > div {
+    position: absolute;
+    width: 100%;
+}
