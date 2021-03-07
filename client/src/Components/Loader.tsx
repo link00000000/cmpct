@@ -13,7 +13,6 @@ export const Loader: FunctionComponent<Props> = ({ loading, children }) => {
                 fill="rgb(252, 211, 77)"
                 stroke="#000000"
                 strokeWidth="8px"
-                // className="fixed left-1/2 top-1/2 z-999998 transform -translate-x-1/2 -translate-y-1/2 transition-opacity"
                 className={classNames(
                     'fixed',
                     'left-1/2',
