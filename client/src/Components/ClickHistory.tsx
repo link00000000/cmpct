@@ -1,6 +1,7 @@
-import { FunctionComponent, useEffect, useRef, useState } from 'react'
+import { FunctionComponent } from 'react'
 import { ClickHistoryEntry } from './ClickHistoryEntry'
 import { ClickHistory as IClickHistory } from '../../../src/ClickHistoryManager'
+import FlipMove from 'react-flip-move'
 
 interface Props {
     clicks: IClickHistory
@@ -14,9 +15,11 @@ export const ClickHistory: FunctionComponent<Props> = ({ clicks }) => {
                 {clicks.length !== 1 ? 's' : ''}
             </h1>
 
-            {clicks.map((click, index) => (
-                <ClickHistoryEntry key={index} data={click} />
-            ))}
+            <FlipMove>
+                {clicks.map((click, index) => (
+                    <ClickHistoryEntry key={index} data={click} />
+                ))}
+            </FlipMove>
         </div>
     )
 }
