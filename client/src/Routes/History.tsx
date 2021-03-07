@@ -3,6 +3,7 @@ import { ClickHistory } from '../Components/ClickHistory'
 import { Map } from '../Components/Map'
 import { TextCopy } from '../Components/TextCopy'
 import { Button } from '../Components/Button'
+import { Notification, NotificationType } from '../Components/Notification'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { Modal } from '../Components/Modal'
 import { useState } from 'react'
@@ -19,8 +20,16 @@ import {
 import axios from 'axios'
 import {
     HistoryRequestBody,
+    historyRequestHandler,
     HistoryResponseBody
 } from '../../../src/Routes/History'
+import {
+    DeleteProps,
+    DeleteResponseBody,
+    deleteRequestHandler
+} from '../../../src/Routes/Delete'
+import { response } from 'express'
+import { logger } from '../../../src/Logger'
 
 interface RouteInfo {
     historyId: string
@@ -32,6 +41,9 @@ export const History: FunctionComponent<Props> = (props) => {
     const history = useHistory()
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
+
+    const [showDeleteError, setShowDeleterError] = useState<boolean>(false)
+    const [deleteError, setDeleteError] = useState<string>('')
 
     const socket = useRef<WebSocket>()
 
@@ -113,9 +125,22 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const handleDeleteModalConfirm = () => {
         setShowDeleteModal(false)
-
         // @TODO Handle delete with API
-        history.push('/')
+        axios
+            .delete<DeleteProps, DeleteResponseBody>(
+                `/api/${props.match.params.historyId}`
+            )
+            .then((response) => {
+                if (response.error) {
+                    return
+                }
+                history.push('/')
+            })
+            .catch((error) => {
+                setShowDeleterError(true)
+                setDeleteError(error.message)
+                console.error(error)
+            })
     }
 
     return (
@@ -175,6 +200,16 @@ export const History: FunctionComponent<Props> = (props) => {
                 Are you sure you want to delete this link? This action cannot be
                 undone!
             </Modal>
+
+            <Notification
+                type={NotificationType.error}
+                show={showDeleteError}
+                onClose={() => {
+                    setShowDeleterError(false)
+                }}
+            >
+                Error: {deleteError}
+            </Notification>
         </div>
     )
 }

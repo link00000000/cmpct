@@ -23,7 +23,10 @@ server.api.put(
     '/:shortUrlId',
     redirectRequestHandler(urlManager, clickHistoryManager)
 )
-server.api.delete('/:shortUrlId', deleteRequestHandler(urlManager))
+server.api.delete(
+    '/:shortUrlId',
+    deleteRequestHandler(urlManager, clickHistoryManager)
+)
 server.api.post('/history', historyRequestHandler(clickHistoryManager))
 
 // Start
