@@ -35,8 +35,7 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
-    const [showDeleteError, setShowDeleteError] = useState<boolean>(false)
-    const [deleteError, setDeleteError] = useState<string>('')
+    const [deleteError, setDeleteError] = useState<string | null>('hello')
 
     const socket = useRef<WebSocket>()
 
@@ -113,6 +112,7 @@ export const History: FunctionComponent<Props> = (props) => {
     }, [])
 
     const handleDeleteModalCancel = () => {
+        setDeleteError(null)
         setShowDeleteModal(false)
     }
 
@@ -130,7 +130,6 @@ export const History: FunctionComponent<Props> = (props) => {
                 history.push('/')
             })
             .catch((error) => {
-                setShowDeleteError(true)
                 setDeleteError(error.message)
                 console.error(error)
             })
@@ -196,12 +195,12 @@ export const History: FunctionComponent<Props> = (props) => {
 
             <Notification
                 type={NotificationType.error}
-                show={showDeleteError}
+                show={deleteError !== null}
                 onClose={() => {
-                    setShowDeleteError(false)
+                    setDeleteError(null)
                 }}
             >
-                Error: {deleteError}
+                There was an error deleting cmpct link. {deleteError}
             </Notification>
         </div>
     )
