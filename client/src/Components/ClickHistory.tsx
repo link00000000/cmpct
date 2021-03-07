@@ -17,7 +17,10 @@ export const ClickHistory: FunctionComponent<Props> = ({ clicks }) => {
 
             <FlipMove>
                 {clicks.map((click, index) => (
-                    <ClickHistoryEntry key={index} data={click} />
+                    <ClickHistoryEntry
+                        key={clicks.length - index - 1}
+                        data={click}
+                    />
                 ))}
             </FlipMove>
         </div>
