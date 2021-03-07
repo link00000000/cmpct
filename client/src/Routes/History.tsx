@@ -88,8 +88,9 @@ export const History: FunctionComponent<Props> = (props) => {
             const payload = JSON.parse(message.data) as HistorySocketResponse
 
             if (payload.type === 'error') {
-                // @TODO Handle Errors
-                console.error((payload.data as any).message)
+                const message = (payload.data as any).message
+                setDeleteError(message)
+                console.error(message)
             } else if (payload.type === 'message') {
                 console.log(message)
             } else if (payload.type === 'data') {
