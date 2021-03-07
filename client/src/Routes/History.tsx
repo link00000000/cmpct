@@ -35,7 +35,7 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false)
 
-    const [deleteError, setDeleteError] = useState<string | null>('hello')
+    const [deleteError, setDeleteError] = useState<string | null>(null)
 
     const socket = useRef<WebSocket>()
 
