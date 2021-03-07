@@ -1,3 +1,4 @@
+import { logger } from './../Logger'
 import { ResolveTimezone } from './ResolveTimezone'
 import axios from 'axios'
 
@@ -33,8 +34,7 @@ export const IPInfoLookup = async (ipAddress: string) => {
     }
 
     const URL = `${API_HOST}/${ipAddress}?token=${API_TOKEN}`
-
-    console.log(URL)
+    logger.info(`Fetching IP info for ${ipAddress} at ${URL}`)
 
     const { data: response } = await axios.get<IPInfoResponse>(URL)
 
