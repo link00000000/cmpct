@@ -15,7 +15,6 @@ const COORDINATE_PRECISION = 3
 
 export const ClickHistoryEntry: FunctionComponent<Props> = ({ data }) => {
     const formatUTCOffset = (offset: number) => {
-        console.log(offset)
         const isNegative = offset < 0
 
         const absOffset = Math.abs(offset)
