@@ -205,7 +205,17 @@ export class ClickHistoryManager {
             RedirectRequestBody
         >
     ): Promise<ClickHistoryEntry> {
-        let ipAddress = request.ip
+        let ipAddress: string
+
+        if (
+            request.headers &&
+            request.headers['x-forwarded-for'] &&
+            request.headers['x-forwarded-for'].length > 0
+        ) {
+            ipAddress = request.headers['x-forwarded-for'][0]
+        } else {
+            ipAddress = request.ip
+        }
 
         // If we are in development mode, we can use the environment variable
         // `IP_LOOKUP_ADDRESS` to override the IP address used to fetch
