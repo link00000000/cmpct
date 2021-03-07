@@ -20,16 +20,9 @@ import {
 import axios from 'axios'
 import {
     HistoryRequestBody,
-    historyRequestHandler,
     HistoryResponseBody
 } from '../../../src/Routes/History'
-import {
-    DeleteProps,
-    DeleteResponseBody,
-    deleteRequestHandler
-} from '../../../src/Routes/Delete'
-import { response } from 'express'
-import { logger } from '../../../src/Logger'
+import { DeleteProps, DeleteResponseBody } from '../../../src/Routes/Delete'
 
 interface RouteInfo {
     historyId: string
