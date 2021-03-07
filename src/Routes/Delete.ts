@@ -1,12 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { Request, Response } from 'express'
 import { UrlManager } from './../UrlManager'
-import {
-    ClickHistoryManager,
-    ClickHistoryDocument
-} from './../ClickHistoryManager'
-import { config } from 'dotenv/types'
-import axios from 'axios'
+import { ClickHistoryManager } from './../ClickHistoryManager'
 
 interface DeleteProps {
     shortUrlId: string
