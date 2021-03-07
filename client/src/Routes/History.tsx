@@ -21,6 +21,7 @@ import {
     HistoryRequestBody,
     HistoryResponseBody
 } from '../../../src/Routes/History'
+import { Loader } from '../Components/Loader'
 
 interface RouteInfo {
     historyId: string
@@ -37,6 +38,7 @@ export const History: FunctionComponent<Props> = (props) => {
 
     const [clicks, setClicks] = useState<IClickHistory>([])
     const [shortId, setShortId] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
         const historyApiRequestBody: HistoryRequestBody = {
@@ -55,6 +57,7 @@ export const History: FunctionComponent<Props> = (props) => {
 
                 setShortId(response.data.data.shortId)
                 setClicks(response.data.data.clickHistory)
+                setLoading(false)
             })
             .catch((error) => {
                 console.error(error)
@@ -120,50 +123,52 @@ export const History: FunctionComponent<Props> = (props) => {
 
     return (
         <div className="md:container mx-auto p-8 lg:max-w-3xl">
-            <h1 className="text-4xl uppercase font-extrabold text-center mb-8">
-                URL Hstry
-            </h1>
+            <Loader loading={loading}>
+                <h1 className="text-4xl uppercase font-extrabold text-center mb-8">
+                    URL Hstry
+                </h1>
 
-            <Map
-                markers={clicks
-                    .filter((click) => click.coordinates)
-                    .map(({ city, state, country, coordinates }) => {
-                        const title = [city, state, country]
-                            .filter((x) => x !== undefined)
-                            .join(', ')
+                <Map
+                    markers={clicks
+                        .filter((click) => click.coordinates)
+                        .map(({ city, state, country, coordinates }) => {
+                            const title = [city, state, country]
+                                .filter((x) => x !== undefined)
+                                .join(', ')
 
-                        return {
-                            title,
-                            coordinates: coordinates ?? {
-                                longitude: 0,
-                                latitude: 0
+                            return {
+                                title,
+                                coordinates: coordinates ?? {
+                                    longitude: 0,
+                                    latitude: 0
+                                }
                             }
-                        }
-                    })
-                    .reverse()}
-            />
+                        })
+                        .reverse()}
+                />
 
-            <TextCopy
-                display={window.location.host + '/' + shortId}
-                value={
-                    window.location.protocol +
-                    '//' +
-                    window.location.host +
-                    '/' +
-                    shortId
-                }
-            />
+                <TextCopy
+                    display={window.location.host + '/' + shortId}
+                    value={
+                        window.location.protocol +
+                        '//' +
+                        window.location.host +
+                        '/' +
+                        shortId
+                    }
+                />
 
-            <ClickHistory clicks={clicks} />
+                <ClickHistory clicks={clicks} />
 
-            <Button
-                color="bg-red-500"
-                onClick={() => {
-                    setShowDeleteModal(true)
-                }}
-            >
-                Delete CMPCT Link
-            </Button>
+                <Button
+                    color="bg-red-500"
+                    onClick={() => {
+                        setShowDeleteModal(true)
+                    }}
+                >
+                    Delete CMPCT Link
+                </Button>
+            </Loader>
 
             <Modal
                 title="Delete CMPCT Link"
