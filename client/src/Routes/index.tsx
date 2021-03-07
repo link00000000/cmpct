@@ -5,11 +5,11 @@
 
 import { BrowserRouter, Route } from 'react-router-dom'
 import { AnimatedSwitch } from 'react-router-transition'
-import './index.css'
 import { Home } from './Home'
 import { Redirect } from './Redirect'
 import { _404 } from './_404'
 import { History } from './History'
+import './index.css'
 
 const pageTransitions = {
     atEnter: { opacity: 0 },
