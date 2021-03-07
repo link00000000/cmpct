@@ -43,7 +43,7 @@ export class HistorySocket {
 
     constructor(private wss: ws.Server) {
         wss.on('connection', (socket: ws) => {
-            const heartbeat = new SocketHeartbeat(socket, 5)
+            const heartbeat = new SocketHeartbeat(socket)
             heartbeat.onHeartbeatStop = () => {
                 socket.close()
                 console.log('dead.')
