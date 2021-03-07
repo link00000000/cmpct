@@ -21,6 +21,7 @@
         "autoprefixer": "^9",
         "axios": "^0.21.1",
         "classnames": "^2.2.6",
+        "copy-to-clipboard": "^3.3.1",
         "countries-list": "^2.6.1",
         "leaflet": "^1.7.1",
         "luxon": "^1.26.0",
