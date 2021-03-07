@@ -39,7 +39,7 @@ export const IPInfoLookup = async (ipAddress: string) => {
     // A bogon IP address is one that is likely bogus. This might trigger if you
     // lookup using a local IP address like 127.0.0.1 or ::1
     if (response.bogon) {
-        throw new TypeError('Bogon IP address')
+        throw new TypeError('Bogon IP address: ' + ipAddress)
     }
 
     // Parse longitude and latitude coordinates
